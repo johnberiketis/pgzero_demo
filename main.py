@@ -1,20 +1,19 @@
 import pgzrun
-import spaceship, spaceship2
 import random
+from pgzero.keyboard import keyboard
+from pgzero.actor import Actor
+from laboratory import *
 
 WIDTH = 512
 HEIGHT = 512
 
-SPEED = 5
-
 background = Actor('background')
 
-characters_pool = [spaceship.CustomActor(), spaceship2.CustomActor()]
-
 character = random.choice(characters_pool)
+# character = characters_pool[2]
 
 def update():
-    character.logic(keyboard, SPEED)
+    character.logic(keyboard)
 
 def draw():
     background.draw()
