@@ -10,15 +10,22 @@ class CustomActor(Actor):
         self.speed = speed
         self.ability = ability
 
+        # Every action point can activate one ability
         self.actions = 1
+
+        # After an ability there is a cooldown that will reset the action points
         self.cooldown = 8
 
+        # The self.default is the original object without any effects applied 
+        # This object is used to reset the state of the character
+        # The dummy parameter is used to avoid exceeding recursion depth
         if not dummy:
             self.default = CustomActor(image, pos, health, speed, ability, dummy = True)
         else:
             self.default = None
 
     def reset(self):
+        # Reset the character to its original state
         self.speed = self.default.speed
         self.cooldown = self.default.cooldown
         self.image = self.default.image
@@ -26,6 +33,7 @@ class CustomActor(Actor):
         self._surf = self.default._surf
 
     def reset_actions(self):
+        # Reset the character's action points
         self.actions = self.default.actions
 
     def logic(self, keyboard):
@@ -36,12 +44,16 @@ class CustomActor(Actor):
             self.x += self.speed
             if (self.x > 512): self.x = 512
 
+        # If space key is pressed and you have at least 1 action available
+        # then activate the characters ability 
         if keyboard.space and self.actions == 1:
             duration = self.ability(self)
             self.actions = 0
             if not duration:
                 duration = 1
+            #After the duration reset the ability's effects
             clock.schedule_unique(self.reset, duration)
+            #After the cooldown reset the action points
             clock.schedule_unique(self.reset_actions, self.cooldown)
 
     

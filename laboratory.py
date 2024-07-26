@@ -1,6 +1,9 @@
 import pygame
 from spaceship import CustomActor
 
+# This is the laboratory where you can create your own custom abilities and 
+# your custom characters(spaceships) that can use those abilities
+
 ######################################
 ######### ABILITIES LAB ##############
 ######################################
