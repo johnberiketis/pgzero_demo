@@ -3,12 +3,13 @@ from pgzero.clock import clock
 
 class CustomActor(Actor):
 
-    def __init__(self, image, pos=(256, 460), health = 100, speed = 5, ability = None, dummy = False, **kwargs):
+    def __init__(self, image, pos=(500, 750), health = 100, speed = 5, ability = None, dummy = False, bounds = (1000, 800), **kwargs):
         super().__init__(image, pos)
         # Initialize additional variables
         self.health = health
         self.speed = speed
         self.ability = ability
+        self.bounds = bounds
 
         # Every action point can activate one ability
         self.actions = 1
@@ -42,7 +43,7 @@ class CustomActor(Actor):
             if (self.x < 0): self.x = 0
         elif keyboard.right:
             self.x += self.speed
-            if (self.x > 512): self.x = 512
+            if (self.x > self.bounds[0]): self.x = self.bounds[0]
 
         # If space key is pressed and you have at least 1 action available
         # then activate the characters ability 
