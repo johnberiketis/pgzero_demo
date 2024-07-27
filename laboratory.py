@@ -27,6 +27,12 @@ def abilityShrink(object):
     object.width, object.height = object._surf.get_size()
     return duration
 
+def abilityMachineGun(object):
+    # Shrink the character
+    duration = 5 #the duration of the ability
+    object.firerate = 10
+    return duration
+
 
 ######################################
 ######### CHARACTERS LAB #############
@@ -34,6 +40,7 @@ def abilityShrink(object):
 mcqueen = CustomActor(image = 'spaceship_red', speed = 4, ability=abilitySuperSpeed)
 casper = CustomActor(image = 'spaceship_yellow', speed = 7, ability=abilityInvisibility)
 antman = CustomActor(image = 'spaceship_green', speed = 5, ability=abilityShrink)
+rambo = CustomActor(image = 'spaceship_red_stripe', speed = 5, ability=abilityMachineGun)
 
 
-characters_pool = [mcqueen, casper, antman]
+characters_pool = [mcqueen, casper, antman, rambo]

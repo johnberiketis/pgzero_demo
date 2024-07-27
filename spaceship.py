@@ -37,6 +37,7 @@ class CustomActor(Actor):
         self.image = self.default.image
         self.y = self.default.y
         self._surf = self.default._surf
+        self.firerate = self.default.firerate
 
     def reset_actions(self):
         # Reset the character's action points
