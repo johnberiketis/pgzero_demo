@@ -16,7 +16,7 @@ character = random.choice(characters_pool)
 # character = characters_pool[2]
 
 def update():
-    character.logic(keyboard)
+    character.update(keyboard)
 
 def draw():
     background.draw()

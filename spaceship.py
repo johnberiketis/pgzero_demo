@@ -36,7 +36,7 @@ class CustomActor(Actor):
         # Reset the character's action points
         self.actions = self.default.actions
 
-    def logic(self, keyboard):
+    def update(self, keyboard):
         if keyboard.left:
             self.x -= self.speed
             if (self.x < 0): self.x = 0
