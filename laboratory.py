@@ -30,7 +30,7 @@ def abilityShrink(object):
 def abilityMachineGun(object):
     # Shrink the character
     duration = 5 #the duration of the ability
-    object.firerate = 10
+    object.gun.firerate = 10
     return duration
 
 

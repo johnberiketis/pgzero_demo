@@ -19,3 +19,39 @@ class Projectile(Actor):
 
     def kill(self):
         self.alive = False
+
+class Gun():
+
+    def __init__(self, mount, firerate = 3, barrels = 1):
+        self.mount = mount
+        self.firerate = firerate
+        self.barrels = barrels
+        self.muzzles_pos = []
+        self.calc_muzzles_pos()
+        self.gun_ready = True
+
+    def shoot(self):
+        if self.gun_ready:
+            projectiles = []
+            for i in range(self.barrels):
+                projectiles.append(Projectile('projectile', tuple([sum(x) for x in zip(self.mount.pos, self.muzzles_pos[i])])))
+            self.gun_ready = False
+            clock.schedule_unique(self.reload, 1/self.firerate)
+            return projectiles
+    
+    def reload(self):
+        self.gun_ready = True
+    
+    def set_mount(self, obj):
+        self.mount = obj
+
+    def calc_muzzles_pos(self):
+        match self.barrels:
+            case 1:
+                self.muzzles_pos = [(0,-50)]
+            case 2:
+                self.muzzles_pos = [(-8,-50), (+8,-50)]
+            case 3:
+                self.muzzles_pos = [(-20,0), (0,-50), (+20,0)]
+            case 4:
+                self.muzzles_pos = [(-20,0), (-8,-50), (+8,-50), (+20,0)]

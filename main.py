@@ -24,9 +24,10 @@ def update():
     for obj in objects:
         if obj.alive == False:
             objects.remove(obj)
-        new_object = obj.update()
-        if new_object:
-            objects.append(new_object)
+        new_objects = obj.update()
+        if new_objects:
+            for new_obj in new_objects:
+                objects.append(new_obj)
 
 def draw():
     background.draw()
