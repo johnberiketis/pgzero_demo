@@ -1,4 +1,3 @@
-import env_setup
 import pgzrun
 import random
 from pgzero.keyboard import keyboard
