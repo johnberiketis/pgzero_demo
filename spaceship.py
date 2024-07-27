@@ -1,5 +1,7 @@
 from pgzero.actor import Actor
 from pgzero.clock import clock
+from pgzero.keyboard import keyboard
+from classes import Projectile
 
 class CustomActor(Actor):
 
@@ -10,6 +12,9 @@ class CustomActor(Actor):
         self.speed = speed
         self.ability = ability
         self.bounds = bounds
+        self.alive = True
+        self.firerate = 3 #shots per second
+        self.gun_ready = True
 
         # Every action point can activate one ability
         self.actions = 1
@@ -37,7 +42,7 @@ class CustomActor(Actor):
         # Reset the character's action points
         self.actions = self.default.actions
 
-    def update(self, keyboard):
+    def update(self):
         if keyboard.left:
             self.x -= self.speed
             if (self.x < 0): self.x = 0
@@ -57,4 +62,19 @@ class CustomActor(Actor):
             #After the cooldown reset the action points
             clock.schedule_unique(self.reset_actions, self.cooldown)
 
+        if keyboard.lshift:
+            if self.gun_ready:
+                return self.shoot()
+
+    def kill(self):
+        self.alive = False
+
+    def shoot(self):
+        projectile = Projectile('projectile', self.pos)
+        self.gun_ready = False
+        clock.schedule_unique(self.reload, 1/self.firerate)
+        return projectile
+
+    def reload(self):
+        self.gun_ready = True
     

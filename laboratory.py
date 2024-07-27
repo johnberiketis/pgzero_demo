@@ -31,9 +31,9 @@ def abilityShrink(object):
 ######################################
 ######### CHARACTERS LAB #############
 ######################################
-mcqueen = CustomActor(image = 'spaceship_red', speed = 3, ability=abilitySuperSpeed)
-casper = CustomActor(image = 'spaceship_yellow', speed = 6, ability=abilityInvisibility)
-antman = CustomActor(image = 'spaceship_green', speed = 4, ability=abilityShrink)
+mcqueen = CustomActor(image = 'spaceship_red', speed = 4, ability=abilitySuperSpeed)
+casper = CustomActor(image = 'spaceship_yellow', speed = 7, ability=abilityInvisibility)
+antman = CustomActor(image = 'spaceship_green', speed = 5, ability=abilityShrink)
 
 
 characters_pool = [mcqueen, casper, antman]

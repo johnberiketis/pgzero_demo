@@ -1,3 +1,4 @@
+import env_setup
 import pgzrun
 import random
 from pgzero.keyboard import keyboard
@@ -8,6 +9,8 @@ from laboratory import *
 WIDTH = 1000
 HEIGHT = 800
 
+objects = []
+
 background = Actor('background2')
 
 # character = random.choice(characters_pool)
@@ -15,12 +18,19 @@ background = Actor('background2')
 # Use the below line to avoid a random character selection
 character = characters_pool[0]
 
+objects.append(character)
+
 def update():
-    character.update(keyboard)
+    for obj in objects:
+        if obj.alive == False:
+            objects.remove(obj)
+        new_object = obj.update()
+        if new_object:
+            objects.append(new_object)
 
 def draw():
-
     background.draw()
-    character.draw()
+    for obj in objects:
+        obj.draw()
 
 pgzrun.go()
