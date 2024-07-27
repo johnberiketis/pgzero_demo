@@ -13,10 +13,10 @@ objects = []
 
 background = Actor('background2')
 
-# character = random.choice(characters_pool)
+character = random.choice(characters_pool)
 
 # Use the below line to avoid a random character selection
-character = characters_pool[3]
+# character = characters_pool[3]
 
 objects.append(character)
 

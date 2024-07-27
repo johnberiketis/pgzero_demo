@@ -40,7 +40,7 @@ def abilityMachineGun(object):
 mcqueen = CustomActor(image = 'spaceship_red', speed = 4, ability=abilitySuperSpeed)
 casper = CustomActor(image = 'spaceship_yellow', speed = 7, ability=abilityInvisibility)
 antman = CustomActor(image = 'spaceship_green', speed = 5, ability=abilityShrink)
-rambo = CustomActor(image = 'spaceship_red_stripe', speed = 5, ability=abilityMachineGun)
+rambo = CustomActor(image = 'spaceship_aqua_stripe', speed = 5, ability=abilityMachineGun)
 
 
 characters_pool = [mcqueen, casper, antman, rambo]

@@ -53,7 +53,7 @@ class CustomActor(Actor):
 
         # If space key is pressed and you have at least 1 action available
         # then activate the characters ability 
-        if keyboard.space and self.actions == 1:
+        if keyboard.lshift and self.actions == 1:
             duration = self.ability(self)
             self.actions = 0
             if not duration:
@@ -63,7 +63,7 @@ class CustomActor(Actor):
             #After the cooldown reset the action points
             clock.schedule_unique(self.reset_actions, self.cooldown)
 
-        if keyboard.lshift:
+        if keyboard.space:
             if self.gun_ready:
                 return self.shoot()
 
