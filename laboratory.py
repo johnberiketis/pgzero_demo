@@ -16,7 +16,7 @@ def abilitySuperSpeed(object : CustomActor):
 def abilityInvisibility(object : CustomActor):
     # Make character invisible
     duration = 4 #the duration of the ability
-    object.y = -100
+    object.image = 'spaceship_transparent'
     return duration
 
 def abilityShrink(object : CustomActor):
