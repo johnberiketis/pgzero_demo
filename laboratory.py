@@ -7,19 +7,19 @@ from spaceship import CustomActor
 ######################################
 ######### ABILITIES LAB ##############
 ######################################
-def abilitySuperSpeed(object):
+def abilitySuperSpeed(object : CustomActor):
     # Give character super speed
     duration = 5 #the duration of the ability
     object.speed = 10
     return duration
 
-def abilityInvisibility(object):
+def abilityInvisibility(object : CustomActor):
     # Make character invisible
     duration = 4 #the duration of the ability
     object.y = -100
     return duration
 
-def abilityShrink(object):
+def abilityShrink(object : CustomActor):
     # Shrink the character
     duration = 7 #the duration of the ability
     object._surf = pygame.transform.scale(object._surf, (object.width//2, object.width//2))
@@ -28,11 +28,10 @@ def abilityShrink(object):
     return duration
 
 def abilityMachineGun(object):
-    # Shrink the character
+    # Firerate boost
     duration = 5 #the duration of the ability
     object.gun.firerate = 10
     return duration
-
 
 ######################################
 ######### CHARACTERS LAB #############
@@ -41,6 +40,5 @@ mcqueen = CustomActor(image = 'spaceship_red', speed = 4, ability=abilitySuperSp
 casper = CustomActor(image = 'spaceship_yellow', speed = 7, ability=abilityInvisibility)
 antman = CustomActor(image = 'spaceship_green', speed = 5, ability=abilityShrink)
 rambo = CustomActor(image = 'spaceship_aqua_stripe', speed = 5, ability=abilityMachineGun)
-
 
 characters_pool = [mcqueen, casper, antman, rambo]

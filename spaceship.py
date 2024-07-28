@@ -13,7 +13,7 @@ class CustomActor(Actor):
         self.ability = ability
         self.bounds = bounds
         self.alive = True
-        self.gun = Gun(self, 3, 4)
+        self.gun = Gun(self, 3, 1)
 
         # Every action point can activate one ability
         self.actions = 1
