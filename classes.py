@@ -46,6 +46,10 @@ class Gun():
     def set_mount(self, obj):
         self.mount = obj
 
+    def set_barrels(self, barrels):
+        self.barrels = barrels
+        self.calc_muzzles_pos()
+
     def calc_muzzles_pos(self):
         barrels = self.barrels
         if barrels == 2:
