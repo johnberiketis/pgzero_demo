@@ -25,6 +25,7 @@ class Gun():
     def __init__(self, mount, firerate = 3, barrels = 1):
         self.mount = mount
         self.firerate = firerate
+        barrels = 1 if barrels > 4 else barrels
         self.barrels = barrels
         self.muzzles_pos = []
         self.calc_muzzles_pos()
@@ -46,12 +47,12 @@ class Gun():
         self.mount = obj
 
     def calc_muzzles_pos(self):
-        match self.barrels:
-            case 1:
-                self.muzzles_pos = [(0,-50)]
-            case 2:
-                self.muzzles_pos = [(-8,-50), (+8,-50)]
-            case 3:
-                self.muzzles_pos = [(-20,0), (0,-50), (+20,0)]
-            case 4:
-                self.muzzles_pos = [(-20,0), (-8,-50), (+8,-50), (+20,0)]
+        barrels = self.barrels
+        if barrels == 2:
+            self.muzzles_pos = [(-8,-50), (+8,-50)]
+        elif barrels == 3:
+            self.muzzles_pos = [(-20,0), (0,-50), (+20,0)]
+        elif barrels == 4:
+            self.muzzles_pos = [(-20,0), (-8,-50), (+8,-50), (+20,0)]
+        else:
+            self.muzzles_pos = [(0,-50)]
