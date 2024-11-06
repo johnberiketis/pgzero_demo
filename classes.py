@@ -3,18 +3,21 @@ from pgzero.clock import clock
 
 class Projectile(Actor):
 
-    def __init__(self, image, pos, speed = 8, direction = -1, timespan = 10, bounds = (1000, 800)):
+    def __init__(self, image, pos, speed = 8, direction = -1, timespan = 10, rotation = 0, angle = 0, bounds = (1000, 800)):
         super().__init__(image, pos)
         self.speed = speed
         self.direction = direction
         self.timespan = timespan
         self.bounds = bounds
         self.alive = True
+        self.rotation = rotation
+        self.angle = angle
         clock.schedule_unique(self.kill, self.timespan)
 
     def update(self):
+        self.angle = self.angle + self.rotation
         self.y += self.speed*self.direction
-        if self.y <= 0 or self.y >= self.bounds[1]:
+        if self.y <= -50 or self.y >= self.bounds[1] + 50:
             self.kill()
 
     def kill(self):

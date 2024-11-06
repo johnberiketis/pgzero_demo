@@ -5,7 +5,7 @@ from classes import  Gun
 
 class CustomActor(Actor):
 
-    def __init__(self, image, pos=(500, 750), health = 100, speed = 5, ability = None, dummy = False, bounds = (1000, 800), **kwargs):
+    def __init__(self, image, pos=(500, 750), health = 2, speed = 5, ability = None, dummy = False, bounds = (1000, 800), **kwargs):
         super().__init__(image, pos)
         # Initialize additional variables
         self.health = health
@@ -13,7 +13,7 @@ class CustomActor(Actor):
         self.ability = ability
         self.bounds = bounds
         self.alive = True
-        self.gun = Gun(self, 3, 1)
+        self.gun = Gun(mount=self, firerate=3, barrels=1)
 
         # Every action point can activate one ability
         self.actions = 1
@@ -35,8 +35,10 @@ class CustomActor(Actor):
         self.cooldown = self.default.cooldown
         self.image = self.default.image
         self.y = self.default.y
-        self._surf = self.default._surf
-        self.gun = self.default.gun
+
+        self.gun.firerate = self.default.gun.firerate
+        self.gun.barrels = self.default.gun.barrels
+        self.gun.calc_muzzles_pos()
         self.gun.set_mount(self)
 
     def reset_actions(self):
@@ -44,6 +46,10 @@ class CustomActor(Actor):
         self.actions = self.default.actions
 
     def update(self):
+        if self.health <= 0:
+            self.alive = False
+            return
+
         if keyboard.left:
             self.x -= self.speed
             if (self.x < 0): self.x = 0
@@ -51,7 +57,7 @@ class CustomActor(Actor):
             self.x += self.speed
             if (self.x > self.bounds[0]): self.x = self.bounds[0]
 
-        # If space key is pressed and you have at least 1 action available
+        # If left shift key is pressed and you have at least 1 action available
         # then activate the characters ability 
         if keyboard.lshift and self.actions == 1:
             duration = self.ability(self)
@@ -65,7 +71,11 @@ class CustomActor(Actor):
 
         if keyboard.space:
             return self.gun.shoot()
-
+        
     def kill(self):
         self.alive = False
+
+    def damage(self, damage):
+        self.health -= damage
+        print(self.health) 
     
