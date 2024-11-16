@@ -1,4 +1,5 @@
 from classes import Spaceship
+import random
 
 # This is the laboratory where you can create your own custom abilities and 
 # your spacehips that can use those abilities
@@ -40,7 +41,7 @@ rambo = Spaceship(image = 'spaceship_aqua_stripe', speed = 5, ability=machine_gu
 
 characters_pool = [mcqueen, casper, gunner, rambo]
 
-# character = random.choice(characters_pool)
+character = random.choice(characters_pool)
 
 # Use the below line to avoid a random character selection
 character = characters_pool[3]

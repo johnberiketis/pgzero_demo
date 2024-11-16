@@ -1,9 +1,10 @@
 import pgzrun
 import random
-from pgzero.actor import Actor
-from laboratory import *
+from laboratory import character
 from classes import Asteroid, Background
-from copy import deepcopy
+from gui import Bar
+from pygame import Color
+import sys
 
 # The game window size
 WIDTH = 1000
@@ -11,6 +12,7 @@ HEIGHT = 800
 background = Background('background2')
 
 objects = [character]
+healthbar = Bar((5,HEIGHT - 20), (180,15), Color(128, 0, 0), Color(50, 50, 50), 10)
     
 def update_enviroment():
 
@@ -37,28 +39,43 @@ def update_enviroment():
 
 def update_objects():
 
+    new_objects = []
+
     for obj in objects:
+        
+        self_excluded_list = [o for o in objects if o != obj]
+        coll_index = obj.collidelist(self_excluded_list)
+        if coll_index >= 0:
+            obj.collide( self_excluded_list[coll_index] )
 
-        coll_index = obj.collidelist(objects)
-        if coll_index >= 0 and objects[coll_index] is not obj:
-            obj.collide( objects[coll_index] )
+        created_objects = obj.update()
+        if created_objects:
+            new_objects.extend(created_objects)
 
-        new_objects = obj.update()
-
-        if new_objects:
-            objects.extend(new_objects)
-
+    for obj in objects:
         if obj.alive == False:
+            if obj == character:
+                #GAME OVER
+                sys.exit(0)
             objects.remove(obj)
+            del obj
+
+    objects.extend(new_objects)
+
+def update_gui():
+    healthbar.update(character.health, character.max_health)
 
 def update():
 
     update_enviroment()
     update_objects()
+    update_gui()
 
 def draw():
     background.draw()
     for obj in objects:
         obj.draw()
+
+    healthbar.draw()
 
 pgzrun.go()

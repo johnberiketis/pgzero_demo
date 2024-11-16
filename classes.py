@@ -8,6 +8,7 @@ class Object(Actor):
         super().__init__(image, pos)
         self.speed = speed
         self.health = health
+        self.max_health = health
         self.direction = direction
         self.timespan = timespan
         self.bounds = bounds
@@ -21,14 +22,14 @@ class Object(Actor):
         self.health -= damage
 
     def collide(self, object):
-        pass
+        print(f"{type(self).__name__} collided with ", type(object).__name__)
 
     def kill(self):
         self.alive = False
 
 class Spaceship(Object):
 
-    def __init__(self, image, pos=(500, 750), health = 2, speed = 5, ability = None, dummy = False, bounds = (1000, 800), parent = None):
+    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, dummy = False, bounds = (1000, 800), parent = None):
         super().__init__(image, pos, health=health, speed=speed, bounds=bounds, parent=parent)
         # Initialize additional variables
         self.ability = ability
@@ -96,17 +97,14 @@ class Spaceship(Object):
         print(self.health)
 
     def collide(self, object):
+        super().collide(object)
         if isinstance(object, Asteroid):
-            print("Collided with Asteroid")
             self.damage(1)
         elif isinstance(object, Projectile):
-            print("Collided with Projectile")
-            self.damage(object.damage)
+            if object.parent != self:
+                self.damage(object.damage)
         elif isinstance(object, Spaceship):
-            print("Collided with Spaceship")
             self.damage(1)
-        else:
-            print("Collided with Unkown")
 
 class Asteroid(Object):
 
@@ -121,9 +119,9 @@ class Asteroid(Object):
 
     def damage(self, damage):
         self.health -= damage
-        print("Asteroid:", self.health)
 
     def collide(self, object):
+        super().collide(object)
         if isinstance(object, Spaceship):
             self.alive = False
         elif isinstance(object, Projectile):
@@ -144,6 +142,7 @@ class Projectile(Object):
             self.kill()
 
     def collide(self, object):
+        super().collide(object)
         if self.parent != object:
             self.alive = False
 
