@@ -17,6 +17,7 @@ def invisibility(spaceship : Spaceship):
     # Make character invisible
     duration = 4 #the duration of the ability
     spaceship.image = 'spaceship_transparent'
+    spaceship.collidable = False
     return duration
 
 def too_many_guns(spaceship : Spaceship):

@@ -12,9 +12,9 @@ HEIGHT = 800
 background = Background('background2')
 
 objects = [character]
-healthbar = Bar((5,HEIGHT - 20), (180,15), Color(128, 0, 0), Color(50, 50, 50), 10)
-abilitybar = Bar((5,HEIGHT - 40), (180,15), Color(128, 128, 0), Color(50, 50, 50), 10)
-cooldownbar = Bar((5,HEIGHT - 40), (180,15), Color(100, 100, 0), Color(50, 50, 50), 10, reversed = True)
+healthbar = Bar((5,HEIGHT - 20), (180,10), Color(128, 0, 0), Color(50, 50, 50), 10)
+abilitybar = Bar((5,HEIGHT - 35), (180,10), Color(0, 200, 0), Color(50, 50, 50), 10)
+cooldownbar = Bar((5,HEIGHT - 35), (180,10), Color(0, 150, 0), Color(50, 50, 50), 10, reversed = True)
     
 def update_enviroment():
 
@@ -45,10 +45,11 @@ def update_objects():
 
     for obj in objects:
         
-        self_excluded_list = [o for o in objects if o != obj]
-        coll_index = obj.collidelist(self_excluded_list)
-        if coll_index >= 0:
-            obj.collide( self_excluded_list[coll_index] )
+        if obj.collidable:
+            filtered_objects_list = [o for o in objects if o != obj and o.collidable] #Exclude self and objects with no collision
+            coll_index = obj.collidelist(filtered_objects_list)
+            if coll_index >= 0:
+                obj.collide( filtered_objects_list[coll_index] )
 
         created_objects = obj.update()
         if created_objects:

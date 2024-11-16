@@ -22,7 +22,7 @@ class Object(Actor):
         self.health -= damage
 
     def collide(self, object):
-        print(f"{type(self).__name__} collided with ", type(object).__name__)
+        print(f"{type(self).__name__} collided with", type(object).__name__)
 
     def kill(self):
         self.alive = False
@@ -60,7 +60,7 @@ class Spaceship(Object):
         self.speed = self.default.speed
         self.cooldown = self.default.cooldown
         self.image = self.default.image
-        self.y = self.default.y
+        self.collidable = True
 
         self.gun.firerate = self.default.gun.firerate
         self.gun.barrels = self.default.gun.barrels
@@ -111,7 +111,6 @@ class Spaceship(Object):
 
     def damage(self, damage):
         super().damage( damage )
-        print(self.health)
 
     def collide(self, object):
         super().collide(object)
