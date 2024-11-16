@@ -10,7 +10,7 @@ class Bar():
         draw.rect(surface, color_front, rect_front, border_radius = 4)
         return surface
 
-    def __init__(self, pos, size, color_front, color_back, max_value, visible = True):
+    def __init__(self, pos, size, color_front, color_back, max_value, visible = True, reversed = False):
         self.visible = visible
         self.pos = pos
         self.size = size
@@ -19,20 +19,26 @@ class Bar():
         self.color_back = color_back
         self.value = max_value
         self.max_value = max_value
+        self.reversed = reversed
 
     def update_surface(self) -> Surface:
-        width_front = (self.value/self.max_value)*self.size[0]
+        if self.reversed:
+            width_front = (1 - (self.value/self.max_value))*self.size[0]
+        else:
+            width_front = (self.value/self.max_value)*self.size[0]
         rect_back= Rect(0, 0, self.size[0], self.size[1])
         rect_front = Rect(0, 0, width_front, self.size[1])
         draw.rect(self.surface, self.color_back, rect_back, border_radius = 4)
         draw.rect(self.surface, self.color_front, rect_front, border_radius = 4)
 
-    def update(self, value, max_value = None):
-        self.value = value
+    def update(self, value = None, max_value = None):
+        if value:
+            self.value = value
         if max_value:
             self.max_value = max_value
         self.update_surface()
 
     def draw(self):
-        game.screen.blit(self.surface, self.pos)
+        if self.visible:
+            game.screen.blit(self.surface, self.pos)
     

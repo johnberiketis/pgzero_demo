@@ -37,9 +37,11 @@ class Spaceship(Object):
 
         # Every action point can activate one ability
         self.actions = 1
+        self.ability_duration = 1
 
         # After an ability there is a cooldown that will reset the action points
         self.cooldown = 8
+        self.cooldown_timer = 0
 
         # The self.default is the original object without any effects applied 
         # This object is used to reset the state of the character
@@ -49,8 +51,12 @@ class Spaceship(Object):
         else:
             self.default = None
 
+        self.has_active_ability = False
+        self.ability_timer = 0
+
     def reset(self):
         # Reset the character to its original state
+        self.has_active_ability = False
         self.speed = self.default.speed
         self.cooldown = self.default.cooldown
         self.image = self.default.image
@@ -61,6 +67,10 @@ class Spaceship(Object):
         self.gun.calc_muzzles_pos()
         self.gun.set_mount(self)
 
+        #After the cooldown reset the action points
+        self.cooldown_timer = self.cooldown*60
+        clock.schedule_unique(self.reset_actions, self.cooldown)
+
     def reset_actions(self):
         # Reset the character's action points
         self.actions = self.default.actions
@@ -69,6 +79,12 @@ class Spaceship(Object):
         if self.health <= 0:
             self.alive = False
             return
+        
+        if self.cooldown_timer > 0:
+            self.cooldown_timer -= 1 # pgzero runs at 60FPS
+
+        if self.ability_timer > 0:
+            self.ability_timer -= 1 # pgzero runs at 60FPS
 
         if keyboard.left:
             self.x -= self.speed
@@ -81,13 +97,14 @@ class Spaceship(Object):
         # then activate the characters ability 
         if keyboard.lshift and self.actions == 1:
             duration = self.ability(self)
+            self.has_active_ability = True
+            self.ability_duration = duration
+            self.ability_timer = duration*60
             self.actions = 0
             if not duration:
                 duration = 1
             #After the duration reset the ability's effects
             clock.schedule_unique(self.reset, duration)
-            #After the cooldown reset the action points
-            clock.schedule_unique(self.reset_actions, self.cooldown)
 
         if keyboard.space:
             return self.gun.shoot()

@@ -13,6 +13,8 @@ background = Background('background2')
 
 objects = [character]
 healthbar = Bar((5,HEIGHT - 20), (180,15), Color(128, 0, 0), Color(50, 50, 50), 10)
+abilitybar = Bar((5,HEIGHT - 40), (180,15), Color(128, 128, 0), Color(50, 50, 50), 10)
+cooldownbar = Bar((5,HEIGHT - 40), (180,15), Color(100, 100, 0), Color(50, 50, 50), 10, reversed = True)
     
 def update_enviroment():
 
@@ -63,19 +65,29 @@ def update_objects():
     objects.extend(new_objects)
 
 def update_gui():
-    healthbar.update(character.health, character.max_health)
 
+    healthbar.update(character.health, character.max_health)
+    if character.ability_timer > 0:
+        abilitybar.update(character.ability_timer, character.ability_duration*60)
+    if character.cooldown_timer > 0:
+        cooldownbar.update(character.cooldown_timer, character.cooldown*60)
+
+##### GAME LOOP #####
 def update():
 
     update_enviroment()
     update_objects()
     update_gui()
 
+##### MAIN DRAW #####
 def draw():
     background.draw()
     for obj in objects:
         obj.draw()
 
     healthbar.draw()
-
+    cooldownbar.draw()
+    if character.ability_timer > 0:
+        abilitybar.draw()
+    
 pgzrun.go()
