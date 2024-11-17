@@ -112,17 +112,17 @@ class Gun():
     
     def get_image(self):
         match self.damage:
-            case 1 | 2:
+            case 1:
                 return ProjectileImage.TYPE0.value
-            case 3 | 4:
+            case 2:
                 return ProjectileImage.TYPE1.value
-            case 5 | 6:
+            case 3:
                 return ProjectileImage.TYPE2.value
-            case 7 | 8:
+            case 4:
                 return ProjectileImage.TYPE3.value
-            case 9 | 10:
+            case 5:
                 return ProjectileImage.TYPE4.value
-            case 11 | 12:
+            case 6:
                 return ProjectileImage.TYPE5.value
             case _:
                 return ProjectileImage.TYPE6.value

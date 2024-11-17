@@ -41,7 +41,7 @@ def update_objects():
         
         if obj.collidable:
             filtered_objects_list = [o for o in objects if o != obj and o.collidable] #Exclude self and objects with no collision
-            coll_index = obj.collidelist(filtered_objects_list)
+            coll_index = obj.collidelist(filtered_objects_list) #TODO resolve bug that skips objects that are always in collition with something e.x. 2 touching asteroids
             if coll_index >= 0:
                 obj.collide( filtered_objects_list[coll_index] )
 

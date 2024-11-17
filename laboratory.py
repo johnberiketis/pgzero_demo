@@ -36,20 +36,22 @@ def machine_gun(spaceship: Spaceship):
 ############ GUN LAB #################
 ######################################
 
-cannon = Gun(firerate = 1, barrels = 1, damage = 13, speed = 2)
+cannon = Gun(firerate = 2, barrels = 1, damage = 8, speed = 3)
+super_auto = Gun(firerate = 6, barrels = 1, damage = 1, speed = 10)
 automatic = Gun(firerate = 4, barrels = 1, damage = 2, speed = 10) 
+dual = Gun(firerate = 4, barrels = 2, damage = 3, speed = 10) 
 
 ######################################
 ######### CHARACTERS LAB #############
 ######################################
-mcqueen = Spaceship(image = 'spaceship_red', speed = 4, ability=super_speed, gun = cannon)
-casper = Spaceship(image = 'spaceship_yellow', speed = 7, ability=invisibility, gun = automatic)
-gunner = Spaceship(image = 'spaceship_green', speed = 5, ability=too_many_guns, gun = cannon)
-rambo = Spaceship(image = 'spaceship_aqua_stripe', speed = 5, ability=machine_gun, gun = cannon)
+mcqueen = Spaceship(image = 'spaceship_red', speed = 4, ability=super_speed, gun = super_auto)
+casper = Spaceship(image = 'spaceship_yellow', speed = 7, ability=invisibility, gun = cannon)
+gunner = Spaceship(image = 'spaceship_green', speed = 5, ability=too_many_guns, gun = dual)
+rambo = Spaceship(image = 'spaceship_aqua_stripe', speed = 5, ability=machine_gun, gun = automatic)
 
 # characters_pool = [mcqueen, casper, gunner, rambo]
 
 # character = random.choice(characters_pool)
 
 # Use the below line to avoid a random character selection
-character = mcqueen
+character = rambo
