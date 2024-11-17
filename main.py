@@ -5,6 +5,7 @@ from classes import Asteroid, Background
 from gui import Bar
 from pygame import Color
 import sys
+from utils import asteroid_images
 
 # The game window size
 WIDTH = 1000
@@ -18,22 +19,15 @@ cooldownbar = Bar((5,HEIGHT - 35), (180,10), Color(0, 150, 0), Color(50, 50, 50)
     
 def update_enviroment():
 
-    asteroid_images = ['asteroid1',
-                       'asteroid2',
-                       'asteroid3',
-                       'asteroid4',
-                       'asteroid5',
-                       'asteroid6',
-                       'asteroid7']
-
     if random.randint(0, 150)  == 1:
         asteroid = Asteroid(image = random.choice(asteroid_images), 
-                            pos = (random.randint(-80,WIDTH), 0), 
-                            speed = 3,
-                            health = 4, 
+                            pos = (random.randint(-80,WIDTH), -30), 
+                            speed = 1,
+                            health = 10, 
                             direction = 1, 
                             timespan = 30, 
-                            spin = random.randint(-20,20)/100, 
+                            # spin = random.randint(-20,20)/100, 
+                            spin = 0,
                             rotation = random.randint(1,360)
                            )
         
@@ -59,6 +53,7 @@ def update_objects():
         if obj.alive == False:
             if obj == character:
                 #GAME OVER
+                print("GAME OVER")
                 sys.exit(0)
             objects.remove(obj)
             del obj

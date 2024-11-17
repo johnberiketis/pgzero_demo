@@ -1,6 +1,7 @@
 from pgzero.actor import Actor
 from pgzero.clock import clock
 from pgzero.keyboard import keyboard
+from utils import ProjectileImage
 
 class Object(Actor):
         
@@ -15,25 +16,130 @@ class Object(Actor):
         self.alive = alive
         self.collidable = collidable
         self.spin = spin
-        self.rotation = rotation
+        self.angle = rotation
         self.parent = parent
+        if self.timespan > 0:
+            clock.schedule_unique(self.kill, self.timespan)
 
     def damage(self, damage):
         self.health -= damage
 
     def collide(self, object):
-        print(f"{type(self).__name__} collided with", type(object).__name__)
+        pass
+        # print(f"{type(self).__name__} collided with", type(object).__name__)
 
     def kill(self):
         self.alive = False
 
+class Asteroid(Object):
+
+    def __init__(self, image, pos, speed = 8, health = 10, direction = -1, timespan = 10, spin = 0, rotation = 0, bounds = (1000, 800), parent = None):
+        super().__init__(image, pos, speed=speed, health=health, direction=direction, timespan=timespan, spin=spin, rotation=rotation, bounds=bounds, parent=parent)
+
+    def update(self):
+        self.angle = self.angle + self.spin
+        self.y += self.speed*self.direction
+        if self.y <= -50 or self.y >= self.bounds[1] + 50 or self.health <= 0:
+            self.kill()
+
+    def collide(self, object):
+        super().collide(object)
+        if isinstance(object, Spaceship):
+            self.alive = False
+        elif isinstance(object, Projectile):
+            self.damage( object.damage )
+
+class Projectile(Object):
+
+    def __init__(self, image = 'projectile', pos = (0,0), speed = 8, health = 1, direction = -1, spin = 0, rotation = 0, bounds = (1000, 800), damage = 1, parent = None):
+        super().__init__(image, pos, speed=speed, health=health, direction=direction, timespan=10, spin=spin, rotation=rotation, bounds=bounds, parent=parent)
+        self.damage: int = damage
+
+    def update(self):
+        self.y += self.speed*self.direction
+        if self.y <= -50 or self.y >= self.bounds[1] + 50:
+            self.kill()
+
+    def collide(self, object):
+        super().collide(object)
+        if self.parent != object and not isinstance(object, Projectile):
+            self.alive = False
+
+class Gun():
+
+    def __init__(self, firerate = 3, barrels = 1, damage = 1, speed = 8):
+        self.mount = None,
+        self.firerate = firerate
+        self.barrels = 4 if barrels > 4 else barrels
+        self.damage = damage
+        self.speed = speed
+        self.muzzles_pos = []
+        self.calc_muzzles_pos()
+        self.gun_ready = True
+
+    def copy(self):
+        return Gun(firerate=self.firerate, barrels=self.barrels, damage=self.damage, speed=self.speed)
+
+    def shoot(self):
+        if self.gun_ready and self.mount:
+            projectiles = []
+            for i in range(self.barrels):
+                projectiles.append(Projectile(self.get_image(), tuple([sum(x) for x in zip(self.mount.pos, self.muzzles_pos[i])]), parent = self.mount, damage = self.damage, speed = self.speed))
+            self.gun_ready = False
+            clock.schedule_unique(self.reload, 1/self.firerate)
+            return projectiles
+    
+    def reload(self):
+        self.gun_ready = True
+    
+    def set_mount(self, obj):
+        self.mount = obj
+
+    def set_barrels(self, barrels):
+        self.barrels = barrels
+        self.calc_muzzles_pos()
+
+    def calc_muzzles_pos(self):
+        barrels = self.barrels
+        if barrels == 2:
+            self.muzzles_pos = [(-8,-50), (+8,-50)]
+        elif barrels == 3:
+            self.muzzles_pos = [(-20,0), (0,-50), (+20,0)]
+        elif barrels == 4:
+            self.muzzles_pos = [(-20,0), (-8,-50), (+8,-50), (+20,0)]
+        else:
+            self.muzzles_pos = [(0,-50)]
+    
+    def get_image(self):
+        match self.damage:
+            case 1 | 2:
+                return ProjectileImage.TYPE0.value
+            case 3 | 4:
+                return ProjectileImage.TYPE1.value
+            case 5 | 6:
+                return ProjectileImage.TYPE2.value
+            case 7 | 8:
+                return ProjectileImage.TYPE3.value
+            case 9 | 10:
+                return ProjectileImage.TYPE4.value
+            case 11 | 12:
+                return ProjectileImage.TYPE5.value
+            case _:
+                return ProjectileImage.TYPE6.value
+
+class Background(Actor):
+
+    def __init__(self, image):
+        super().__init__(image)
+
 class Spaceship(Object):
 
-    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, dummy = False, bounds = (1000, 800), parent = None):
+    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, gun: Gun = None, dummy = False, bounds = (1000, 800), parent = None):
         super().__init__(image, pos, health=health, speed=speed, bounds=bounds, parent=parent)
         # Initialize additional variables
         self.ability = ability
-        self.gun = Gun(mount=self, firerate=3, barrels=1)
+        self.gun = gun.copy() if gun else Gun(firerate=3, barrels=1, damage=5)
+        self.gun.set_mount(self)
 
         # Every action point can activate one ability
         self.actions = 1
@@ -47,7 +153,7 @@ class Spaceship(Object):
         # This object is used to reset the state of the character
         # The dummy parameter is used to avoid exceeding recursion depth
         if not dummy:
-            self.default = Spaceship(image, pos, health, speed, ability, dummy = True)
+            self.default = Spaceship(image, pos, health, speed, ability, dummy = True, gun=self.gun)
         else:
             self.default = None
 
@@ -121,89 +227,3 @@ class Spaceship(Object):
                 self.damage(object.damage)
         elif isinstance(object, Spaceship):
             self.damage(1)
-
-class Asteroid(Object):
-
-    def __init__(self, image, pos, speed = 8, health = 10, direction = -1, timespan = 10, spin = 0, rotation = 0, bounds = (1000, 800), parent = None):
-        super().__init__(image, pos, speed=speed, health=health, direction=direction, timespan=timespan, spin=spin, rotation=rotation, bounds=bounds, parent=parent)
-
-    def update(self):
-        self.rotation = self.rotation + self.spin
-        self.y += self.speed*self.direction
-        if self.y <= -50 or self.y >= self.bounds[1] + 50 or self.health <= 0:
-            self.kill()
-
-    def damage(self, damage):
-        self.health -= damage
-
-    def collide(self, object):
-        super().collide(object)
-        if isinstance(object, Spaceship):
-            self.alive = False
-        elif isinstance(object, Projectile):
-            self.damage( object.damage )
-
-
-class Projectile(Object):
-
-    def __init__(self, image, pos, speed = 8, health = 1, direction = -1, timespan = 10, spin = 0, rotation = 0, bounds = (1000, 800), damage = 1, parent = None):
-        super().__init__(image, pos, speed=speed, health=health, direction=direction, timespan=timespan, spin=spin, rotation=rotation, bounds=bounds, parent=parent)
-        self.damage: int = damage
-        clock.schedule_unique(self.kill, self.timespan)
-
-    def update(self):
-        self.rotation = self.rotation + self.spin
-        self.y += self.speed*self.direction
-        if self.y <= -50 or self.y >= self.bounds[1] + 50:
-            self.kill()
-
-    def collide(self, object):
-        super().collide(object)
-        if self.parent != object:
-            self.alive = False
-
-class Gun():
-
-    def __init__(self, mount, firerate = 3, barrels = 1):
-        self.mount = mount
-        self.firerate = firerate
-        barrels = 1 if barrels > 4 else barrels
-        self.barrels = barrels
-        self.muzzles_pos = []
-        self.calc_muzzles_pos()
-        self.gun_ready = True
-
-    def shoot(self):
-        if self.gun_ready:
-            projectiles = []
-            for i in range(self.barrels):
-                projectiles.append(Projectile('projectile', tuple([sum(x) for x in zip(self.mount.pos, self.muzzles_pos[i])]), parent = self.mount))
-            self.gun_ready = False
-            clock.schedule_unique(self.reload, 1/self.firerate)
-            return projectiles
-    
-    def reload(self):
-        self.gun_ready = True
-    
-    def set_mount(self, obj):
-        self.mount = obj
-
-    def set_barrels(self, barrels):
-        self.barrels = barrels
-        self.calc_muzzles_pos()
-
-    def calc_muzzles_pos(self):
-        barrels = self.barrels
-        if barrels == 2:
-            self.muzzles_pos = [(-8,-50), (+8,-50)]
-        elif barrels == 3:
-            self.muzzles_pos = [(-20,0), (0,-50), (+20,0)]
-        elif barrels == 4:
-            self.muzzles_pos = [(-20,0), (-8,-50), (+8,-50), (+20,0)]
-        else:
-            self.muzzles_pos = [(0,-50)]
-
-class Background(Actor):
-
-    def __init__(self, image):
-        super().__init__(image)
