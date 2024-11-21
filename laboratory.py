@@ -1,57 +1,57 @@
-from classes import Spaceship, Projectile, Gun
-import random
+from classes.spaceship import Spaceship
+from classes.weapon import Weapon
+from classes.reflector import Reflector
 
-# This is the laboratory where you can create your own custom abilities and 
-# your spacehips that can use those abilities
+# This is the laboratory where you can create your own custom 
+# abilities, weapons and spaceships 
 
 ######################################
 ######### ABILITIES LAB ##############
 ######################################
+
 def super_speed(spaceship : Spaceship):
     # Give character super speed
-    duration = 5 #the duration of the ability
-    spaceship.speed = 10
-    return duration
+    spaceship.speed = 14
 
 def invisibility(spaceship : Spaceship):
     # Make character invisible
-    duration = 4 #the duration of the ability
     spaceship.image = 'spaceship_transparent'
     spaceship.collidable = False
-    return duration
 
 def too_many_guns(spaceship : Spaceship):
-    # Give character 4 guns
-    duration = 6
-    spaceship.gun.set_barrels(4)
-    return duration
+    # Give character 4 weapons
+    spaceship.weapon.set_barrels(4)
 
 def machine_gun(spaceship: Spaceship):
     # Firerate boost
-    duration = 5 #the duration of the ability
-    spaceship.gun.firerate = 10
-    return duration
+    spaceship.weapon.firerate = 16
+
+def reflection(spaceship: Spaceship):
+    # A reflective shield
+    reflector = Reflector(image = 'metal_wall', pos = (spaceship.x, spaceship.y - 60), timespan = spaceship.ability_duration)
+    spaceship.add_child( reflector )
+    return reflector
 
 ######################################
 ############ GUN LAB #################
 ######################################
 
-cannon = Gun(firerate = 2, barrels = 1, damage = 8, speed = 3)
-super_auto = Gun(firerate = 6, barrels = 1, damage = 1, speed = 10)
-automatic = Gun(firerate = 4, barrels = 1, damage = 2, speed = 10) 
-dual = Gun(firerate = 4, barrels = 2, damage = 3, speed = 10) 
+cannon = Weapon(firerate = 2, barrels = 1, damage = 8, speed = 3)
+super_auto = Weapon(firerate = 6, barrels = 1, damage = 1, speed = 10)
+automatic = Weapon(firerate = 4, barrels = 1, damage = 2, speed = 10) 
+dual = Weapon(firerate = 4, barrels = 2, damage = 3, speed = 10) 
 
 ######################################
 ######### CHARACTERS LAB #############
 ######################################
-mcqueen = Spaceship(image = 'spaceship_red', speed = 4, ability=super_speed, gun = super_auto)
-casper = Spaceship(image = 'spaceship_yellow', speed = 7, ability=invisibility, gun = cannon)
-gunner = Spaceship(image = 'spaceship_green', speed = 5, ability=too_many_guns, gun = dual)
-rambo = Spaceship(image = 'spaceship_aqua_stripe', speed = 5, ability=machine_gun, gun = automatic)
+#TODO implement point system?
+mcqueen = Spaceship(image = 'spaceship_red', speed = 7, ability=super_speed, ability_duration = 6, weapon = super_auto)
+casper = Spaceship(image = 'spaceship_yellow', speed = 6, ability=invisibility, ability_duration = 8, weapon = cannon)
+gunner = Spaceship(image = 'spaceship_black', speed = 6, ability=too_many_guns, ability_duration = 6, weapon = dual)
+rambo = Spaceship(image = 'spaceship_aqua_stripe', speed = 6, ability=machine_gun, ability_duration = 6, weapon = automatic)
+turtle = Spaceship(image = 'spaceship_green', speed = 6, ability=reflection, ability_duration = 20, weapon = automatic)
 
 # characters_pool = [mcqueen, casper, gunner, rambo]
-
 # character = random.choice(characters_pool)
 
-# Use the below line to avoid a random character selection
-character = rambo
+character = turtle

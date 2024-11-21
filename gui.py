@@ -1,4 +1,3 @@
-from pgzero.actor import Actor
 from pygame import draw, Surface, Rect, Color
 from pgzero import game
 
