@@ -1,10 +1,12 @@
-from utils import Object
+from utils import Object, team
 from globals import WIDTH, HEIGHT
+from . import spaceship
+from . import reflector
 
 class Projectile(Object):
 
-    def __init__(self, image = 'projectile', pos = (0,0), speed = 8, health = 1, direction = -1, spin = 0, angle = 0, bounds = (WIDTH, HEIGHT), damage = 1, source = None):
-        super().__init__(image, pos, speed=speed, health=health, direction=direction, timespan=10, spin=spin, angle=angle, bounds=bounds, source=source)
+    def __init__(self, image = 'projectile', pos = (0,0), speed = 8, health = 1, direction = -1, spin = 0, angle = 0, bounds = (WIDTH, HEIGHT), damage = 1, source = None, team = team.NEUTRAL):
+        super().__init__(image, pos, speed=speed, health=health, direction=direction, timespan=10, spin=spin, angle=angle, bounds=bounds, source=source, team=team)
         self.damage: int = damage
 
     def update(self):
@@ -13,11 +15,13 @@ class Projectile(Object):
             self.kill()
 
     def collide(self, object):
+        #TODO don't forget to use the new attribute "team" in Object
         super().collide(object)
-        # if self.source != object and self.source != object.parent and not isinstance(object, Projectile):
-        if self.source != object and self.source != object.parent and self.source != object.source:
+        if (self.source != object and self.source != object.parent and self.source != object.source) or (isinstance(object, spaceship.Spaceship) and self.source != object):
         # if not self.parent_hit(object) and self.source != object.source:
             self.alive = False
+        elif (isinstance(object, reflector.Reflector) and self.source != object.parent):
+            self.direction = -self.direction
 
     # def source_hit(self, obj):
     #     if self.source == obj:

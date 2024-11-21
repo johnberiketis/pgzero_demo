@@ -1,6 +1,6 @@
 from pgzero.clock import clock
 from pgzero.keyboard import keyboard
-from utils import Object
+from utils import Object, team
 from globals import WIDTH, HEIGHT
 from . import weapon as weaponModule
 from . import asteroid as asteroidModule
@@ -8,13 +8,14 @@ from . import projectile as projectileModule
 
 class Spaceship(Object):
 
-    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, ability_duration = 5, weapon: weaponModule.Weapon = None, dummy = False, bounds = (WIDTH, HEIGHT), source = None):
-        super().__init__(image, pos, health=health, speed=speed, bounds=bounds, source=source)
+    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, ability_duration = 5, weapon: weaponModule.Weapon = None, dummy = False, bounds = (WIDTH, HEIGHT), source = None, control = keyboard, team = team.TEAM1):
+        super().__init__(image, pos, health=health, speed=speed, bounds=bounds, source=source, team=team)
         # Initialize additional variables
         self.ability = ability
         self.ability_duration = ability_duration if ability_duration > 0 else 5
         self.weapon = weapon.copy() if weapon else weaponModule.Weapon(firerate=3, barrels=1, damage=5)
         self.weapon.set_mount(self)
+        self.control = control
 
         # Every action point can activate one ability
         self.actions = 1
@@ -69,17 +70,17 @@ class Spaceship(Object):
         if self.ability_timer > 0:
             self.ability_timer -= 1 # pgzero runs at 60FPS
 
-        if keyboard.left:
+        if self.control.left:
             self.move(-self.speed, 0)
             self.clamp()
-        elif keyboard.right:
+        elif self.control.right:
             self.move(+self.speed, 0)
             self.clamp()
 
         # If left shift key is pressed and you have at least 1 action available
         # then activate the characters ability 
         ability_output = []
-        if keyboard.lshift and self.actions == 1:
+        if self.control.lshift and self.actions == 1:
             ability_output = self.ability(self)
             if ability_output and not isinstance(ability_output, list):
                 ability_output = [ability_output]
@@ -90,7 +91,7 @@ class Spaceship(Object):
             clock.schedule_unique(self.reset, self.ability_duration)
         
         projectiles = []
-        if keyboard.space:
+        if self.control.space:
             projectiles = self.weapon.shoot()
             if not projectiles:
                 projectiles = [] 
@@ -104,6 +105,7 @@ class Spaceship(Object):
         super().damage( damage )
 
     def collide(self, object):
+        #TODO don't forget to use the new attribute "team" in Object
         super().collide(object)
         if isinstance(object, asteroidModule.Asteroid):
             self.damage(1)

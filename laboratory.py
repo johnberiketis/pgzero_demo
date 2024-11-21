@@ -1,6 +1,8 @@
 from classes.spaceship import Spaceship
 from classes.weapon import Weapon
 from classes.reflector import Reflector
+from agent import Agent
+from utils import team
 
 # This is the laboratory where you can create your own custom 
 # abilities, weapons and spaceships 
@@ -51,7 +53,11 @@ gunner = Spaceship(image = 'spaceship_black', speed = 6, ability=too_many_guns, 
 rambo = Spaceship(image = 'spaceship_aqua_stripe', speed = 6, ability=machine_gun, ability_duration = 6, weapon = automatic)
 turtle = Spaceship(image = 'spaceship_green', speed = 6, ability=reflection, ability_duration = 20, weapon = automatic)
 
+agent = Agent("Enemy")
+enemySpaceship = Spaceship(image = 'spaceship_black', speed = 6, ability=too_many_guns, ability_duration = 6, weapon = dual, team=team.TEAM2)
+agent.take_control(enemySpaceship)
+
 # characters_pool = [mcqueen, casper, gunner, rambo]
 # character = random.choice(characters_pool)
 
-character = turtle
+character = enemySpaceship

@@ -21,7 +21,7 @@ class Weapon():
         if self.gun_ready and self.mount:
             projectiles = []
             for i in range(self.barrels):
-                projectiles.append(Projectile(self.get_image(), tuple([sum(x) for x in zip(self.mount.pos, self.muzzles_pos[i])]), source = self.mount, damage = self.damage, speed = self.speed))
+                projectiles.append(Projectile(self.get_image(), tuple([sum(x) for x in zip(self.mount.pos, self.muzzles_pos[i])]), source = self.mount, damage = self.damage, speed = self.speed, team=self.mount.team))
             self.gun_ready = False
             clock.schedule_unique(self.reload, 1/self.firerate)
             return projectiles

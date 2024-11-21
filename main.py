@@ -1,8 +1,9 @@
 import pgzrun
 import random
-from laboratory import character
+from laboratory import character, agent
 from classes.asteroid import Asteroid
 from classes.reflector import Reflector
+from classes.projectile import Projectile
 from gui import Bar
 from pygame import Color
 import sys
@@ -18,7 +19,7 @@ cooldownbar = Bar((5,HEIGHT - 35), (180,10), Color(0, 150, 0), Color(50, 50, 50)
 
 def update_enviroment():
 
-    if random.randint(0, 100) < (ASTEROIDS_PER_SECOND/60)*100:
+    if random.random() < (ASTEROIDS_PER_SECOND/60):
         asteroid = Asteroid(image = random.choice(asteroid_images), 
                             pos = (random.randint(-80,WIDTH), -30),
                             angle = random.randint(1,360),
@@ -61,6 +62,7 @@ def update_gui():
 ##### GAME LOOP #####
 def update():
 
+    agent.think(None)
     update_enviroment()
     update_objects()
     update_gui()

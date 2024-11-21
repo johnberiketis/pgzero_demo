@@ -1,11 +1,18 @@
-from enum import Enum
+from enum import Enum, IntEnum
 from pgzero.clock import clock
 from pgzero.actor import Actor
 from globals import WIDTH, HEIGHT
 
+class team(IntEnum):
+    ENEMY = -1
+    NEUTRAL = 0
+    TEAM1 = 1
+    TEAM2 = 2
+   
+
 class Object(Actor):
         
-    def __init__(self, image, pos, speed = 0, health = 1, direction = 0, timespan = -1, spin = 0, angle = 0, bounds = (WIDTH, HEIGHT), alive = True, collidable = True, source = None):
+    def __init__(self, image, pos, speed = 0, health = 1, direction = 0, timespan = -1, spin = 0, angle = 0, bounds = (WIDTH, HEIGHT), alive = True, collidable = True, source = None, team = team.NEUTRAL):
         super().__init__(image, pos)
         self.speed = speed
         self.health = health
@@ -17,6 +24,7 @@ class Object(Actor):
         self.collidable = collidable
         self.spin = spin
         self.angle = angle
+        self.team = team
         self.source = source
         self.parent = None
         self.childs = []
@@ -81,7 +89,7 @@ class ProjectileImage(Enum):
     TYPE5 = 'projectile_5'
     TYPE6 = 'projectile_bullet'
     TYPEBALL = 'projectile_ball'
-
+ 
 asteroid_images = [
     'asteroid1',
     'asteroid2',
