@@ -8,7 +8,7 @@ from . import projectile as projectileModule
 
 class Spaceship(Object):
 
-    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, ability_duration = 5, weapon: weaponModule.Weapon = None, dummy = False, bounds = (WIDTH, HEIGHT), source = None, control = keyboard, team = team.TEAM1):
+    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, ability_duration = 5, weapon: weaponModule.Weapon = None, bounds = (WIDTH, HEIGHT), source = None, control = keyboard, team = team.TEAM1):
         super().__init__(image, pos, health=health, speed=speed, bounds=bounds, source=source, team=team)
         # Initialize additional variables
         self.ability = ability
@@ -26,11 +26,7 @@ class Spaceship(Object):
 
         # The self.default is the original object without any effects applied 
         # This object is used to reset the state of the character
-        # The dummy parameter is used to avoid exceeding recursion depth
-        if not dummy:
-            self.default = Spaceship(image, pos, health, speed, ability, dummy = True, weapon=self.weapon)
-        else:
-            self.default = None
+        self.default = SpaceshipClone(image, pos, health, speed, ability, weapon=self.weapon)
 
         self.has_active_ability = False
         self.ability_timer = 0
@@ -58,7 +54,7 @@ class Spaceship(Object):
         self.actions = self.default.actions
 
     def update(self):
-        new_objects = []
+        super().update()
 
         if self.health <= 0:
             self.alive = False
@@ -79,27 +75,16 @@ class Spaceship(Object):
 
         # If left shift key is pressed and you have at least 1 action available
         # then activate the characters ability 
-        ability_output = []
         if self.control.lshift and self.actions == 1:
-            ability_output = self.ability(self)
-            if ability_output and not isinstance(ability_output, list):
-                ability_output = [ability_output]
+            self.ability(self)
             self.has_active_ability = True
             self.ability_timer = self.ability_duration*60
             self.actions = 0
             #After the duration reset the ability's effects
             clock.schedule_unique(self.reset, self.ability_duration)
         
-        projectiles = []
         if self.control.space:
-            projectiles = self.weapon.shoot()
-            if not projectiles:
-                projectiles = [] 
-        
-        if ability_output:
-            new_objects.extend(ability_output)
-        new_objects.extend(projectiles)
-        return new_objects
+            self.weapon.shoot()
 
     def damage(self, damage):
         super().damage( damage )
@@ -114,3 +99,25 @@ class Spaceship(Object):
                 self.damage(object.damage)
         elif isinstance(object, Spaceship):
             self.damage(1)
+
+class SpaceshipClone():
+
+    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, ability_duration = 5, weapon: weaponModule.Weapon = None, bounds = (WIDTH, HEIGHT), source = None, control = keyboard, team = team.TEAM1):
+        self.image = image
+        self.pos = pos
+        self.speed = speed
+        self.health = health
+        self.bounds = bounds
+        self.source = source
+        self.team = team
+        self.ability = ability
+        self.ability_duration = ability_duration if ability_duration > 0 else 5
+        self.weapon = weapon.copy() if weapon else weaponModule.Weapon(firerate=3, barrels=1, damage=5)
+        self.weapon.set_mount(self)
+        self.control = control
+        self.actions = 1
+        self.cooldown = 8
+        self.cooldown_timer = 0
+        self.has_active_ability = False
+        self.ability_timer = 0
+        self.childs = []

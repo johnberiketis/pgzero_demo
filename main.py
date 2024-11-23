@@ -2,17 +2,15 @@ import pgzrun
 import random
 from laboratory import character, agent
 from classes.asteroid import Asteroid
-from classes.reflector import Reflector
-from classes.projectile import Projectile
 from gui import Bar
 from pygame import Color
 import sys
 from utils import asteroid_images, Background
 from globals import *
+from world import world
 
 background = Background('background2')
 
-objects = [character]
 healthbar = Bar((5,HEIGHT - 20), (180,10), Color(128, 0, 0), Color(50, 50, 50), 10)
 abilitybar = Bar((5,HEIGHT - 35), (180,10), Color(0, 200, 0), Color(50, 50, 50), 10)
 cooldownbar = Bar((5,HEIGHT - 35), (180,10), Color(0, 150, 0), Color(50, 50, 50), 10, reversed = True)
@@ -20,36 +18,30 @@ cooldownbar = Bar((5,HEIGHT - 35), (180,10), Color(0, 150, 0), Color(50, 50, 50)
 def update_enviroment():
 
     if random.random() < (ASTEROIDS_PER_SECOND/60):
-        asteroid = Asteroid(image = random.choice(asteroid_images), 
+        Asteroid(image = random.choice(asteroid_images), 
                             pos = (random.randint(-80,WIDTH), -30),
                             angle = random.randint(1,360),
                             speed=ASTEROIDS_SPEED
                            )
-        
-        objects.append(asteroid)
 
 def update_objects():
 
-    new_objects = []
-
-    for obj in objects:
+    for obj in world.objects:
         
-        obj.handle_collitions(objects)
+        #TODO collitions should be handled by event (enter, exit) 
+        # and pass a "read only" or a Collition class object at the obj.collitions method
+        # obj should only have a representaton of the object not the object itself
+        obj.handle_collitions(world.objects)
+        obj.update()
 
-        created_objects = obj.update()
-        if created_objects:
-            new_objects.extend(created_objects)
-
-    for obj in objects:
+    for obj in world.objects:
         if obj.alive == False:
             if obj == character:
                 #GAME OVER
                 print("GAME OVER")
                 sys.exit(0)
-            objects.remove(obj)
+            world.remove_object(obj)
             del obj
-
-    objects.extend(new_objects)
 
 def update_gui():
 
@@ -70,7 +62,7 @@ def update():
 ##### MAIN DRAW #####
 def draw():
     background.draw()
-    for obj in objects:
+    for obj in world.objects:
         obj.draw()
 
     healthbar.draw()

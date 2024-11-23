@@ -2,6 +2,7 @@ from enum import Enum, IntEnum
 from pgzero.clock import clock
 from pgzero.actor import Actor
 from globals import WIDTH, HEIGHT
+from world import world
 
 class team(IntEnum):
     ENEMY = -1
@@ -28,6 +29,7 @@ class Object(Actor):
         self.source = source
         self.parent = None
         self.childs = []
+        world.add_object(self)
         if self.timespan > 0:
             clock.schedule_unique(self.kill, self.timespan)
 

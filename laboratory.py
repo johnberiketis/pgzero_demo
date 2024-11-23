@@ -32,7 +32,6 @@ def reflection(spaceship: Spaceship):
     # A reflective shield
     reflector = Reflector(image = 'metal_wall', pos = (spaceship.x, spaceship.y - 60), timespan = spaceship.ability_duration)
     spaceship.add_child( reflector )
-    return reflector
 
 ######################################
 ############ GUN LAB #################
@@ -47,17 +46,17 @@ dual = Weapon(firerate = 4, barrels = 2, damage = 3, speed = 10)
 ######### CHARACTERS LAB #############
 ######################################
 #TODO implement point system?
-mcqueen = Spaceship(image = 'spaceship_red', speed = 7, ability=super_speed, ability_duration = 6, weapon = super_auto)
-casper = Spaceship(image = 'spaceship_yellow', speed = 6, ability=invisibility, ability_duration = 8, weapon = cannon)
-gunner = Spaceship(image = 'spaceship_black', speed = 6, ability=too_many_guns, ability_duration = 6, weapon = dual)
-rambo = Spaceship(image = 'spaceship_aqua_stripe', speed = 6, ability=machine_gun, ability_duration = 6, weapon = automatic)
+# mcqueen = Spaceship(image = 'spaceship_red', speed = 7, ability=super_speed, ability_duration = 6, weapon = super_auto)
+# casper = Spaceship(image = 'spaceship_yellow', speed = 6, ability=invisibility, ability_duration = 8, weapon = cannon)
+# gunner = Spaceship(image = 'spaceship_black', speed = 6, ability=too_many_guns, ability_duration = 6, weapon = dual)
+# rambo = Spaceship(image = 'spaceship_aqua_stripe', speed = 6, ability=machine_gun, ability_duration = 6, weapon = automatic)
 turtle = Spaceship(image = 'spaceship_green', speed = 6, ability=reflection, ability_duration = 20, weapon = automatic)
 
 agent = Agent("Enemy")
-enemySpaceship = Spaceship(image = 'spaceship_black', speed = 6, ability=too_many_guns, ability_duration = 6, weapon = dual, team=team.TEAM2)
-agent.take_control(enemySpaceship)
+# enemySpaceship = Spaceship(image = 'spaceship_black', speed = 6, ability=too_many_guns, ability_duration = 6, weapon = dual, team=team.TEAM2)
+# agent.take_control(enemySpaceship)
 
 # characters_pool = [mcqueen, casper, gunner, rambo]
 # character = random.choice(characters_pool)
 
-character = enemySpaceship
+character = turtle
