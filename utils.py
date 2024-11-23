@@ -1,19 +1,12 @@
 from enum import Enum, IntEnum
 from pgzero.clock import clock
 from pgzero.actor import Actor
-from globals import WIDTH, HEIGHT
+from globals import WIDTH, HEIGHT, Team, Type
 from world import world
-
-class team(IntEnum):
-    ENEMY = -1
-    NEUTRAL = 0
-    TEAM1 = 1
-    TEAM2 = 2
    
-
 class Object(Actor):
         
-    def __init__(self, image, pos, speed = 0, health = 1, direction = 0, timespan = -1, spin = 0, angle = 0, bounds = (WIDTH, HEIGHT), alive = True, collidable = True, source = None, team = team.NEUTRAL):
+    def __init__(self, image, pos, speed = 0, health = 1, direction = 0, timespan = -1, spin = 0, angle = 0, bounds = (WIDTH, HEIGHT), alive = True, collidable = True, source = None, team = Team.NEUTRAL):
         super().__init__(image, pos)
         self.speed = speed
         self.health = health
@@ -32,12 +25,6 @@ class Object(Actor):
         world.add_object(self)
         if self.timespan > 0:
             clock.schedule_unique(self.kill, self.timespan)
-
-    def handle_collitions(self, objects):
-        if self.collidable:
-            collided_objects = [o for o in objects if o != self and o.collidable and self.colliderect(o)] #Exclude self and objects with no collision
-            for collided_object in collided_objects:
-                self.collide( collided_object )
 
     def update(self):
         pass
@@ -82,39 +69,18 @@ class Object(Actor):
     def kill(self):
         self.alive = False
 
-class ProjectileImage(Enum):
-    TYPE0 = 'projectile'
-    TYPE1 = 'projectile_1'
-    TYPE2 = 'projectile_2'
-    TYPE3 = 'projectile_3'
-    TYPE4 = 'projectile_4'
-    TYPE5 = 'projectile_5'
-    TYPE6 = 'projectile_bullet'
-    TYPEBALL = 'projectile_ball'
- 
-asteroid_images = [
-    'asteroid1',
-    'asteroid2',
-    'asteroid3',
-    'asteroid4',
-    'asteroid5',
-    'asteroid6',
-    'asteroid7'
-]
-
 class Background(Actor):
 
     def __init__(self, image):
         super().__init__(image)
 
-# def global_pos(local_pos: tuple, reference_pos: tuple):
-#     x = reference_pos[0] + local_pos[0]
-#     y = reference_pos[1] + local_pos[1]
-#     return (x,y)
+class CollisionInformation():
 
-# def local_pos(global_pos: tuple, reference_pos: tuple):
-#     rx =  global_pos[0] - reference_pos[0]
-#     ry =  global_pos[1] - reference_pos[1]
-#     return (rx,ry)
-    
+    def __init__(self, object):
+        self.type = Type[object.__class__.__name__.upper()]
+        self.team = object.team if object.team else Team.NEUTRAL
+        self.damage = object.damage if object.damage else 0
+        
+
+
 

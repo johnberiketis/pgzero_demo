@@ -2,7 +2,7 @@ from classes.spaceship import Spaceship
 from classes.weapon import Weapon
 from classes.reflector import Reflector
 from agent import Agent
-from utils import team
+from utils import Team
 
 # This is the laboratory where you can create your own custom 
 # abilities, weapons and spaceships 
@@ -30,7 +30,7 @@ def machine_gun(spaceship: Spaceship):
 
 def reflection(spaceship: Spaceship):
     # A reflective shield
-    reflector = Reflector(image = 'metal_wall', pos = (spaceship.x, spaceship.y - 60), timespan = spaceship.ability_duration)
+    reflector = Reflector(image = 'metal_wall', pos = (spaceship.x, spaceship.y - 60), timespan = spaceship.ability_duration, team=spaceship.team)
     spaceship.add_child( reflector )
 
 ######################################
@@ -53,7 +53,7 @@ dual = Weapon(firerate = 4, barrels = 2, damage = 3, speed = 10)
 turtle = Spaceship(image = 'spaceship_green', speed = 6, ability=reflection, ability_duration = 20, weapon = automatic)
 
 agent = Agent("Enemy")
-# enemySpaceship = Spaceship(image = 'spaceship_black', speed = 6, ability=too_many_guns, ability_duration = 6, weapon = dual, team=team.TEAM2)
+# enemySpaceship = Spaceship(image = 'spaceship_black', speed = 6, ability=too_many_guns, ability_duration = 6, weapon = dual, team=Team.TEAM2)
 # agent.take_control(enemySpaceship)
 
 # characters_pool = [mcqueen, casper, gunner, rambo]

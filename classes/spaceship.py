@@ -1,14 +1,12 @@
 from pgzero.clock import clock
 from pgzero.keyboard import keyboard
-from utils import Object, team
-from globals import WIDTH, HEIGHT
+from utils import Object
+from globals import WIDTH, HEIGHT, Type, Team
 from . import weapon as weaponModule
-from . import asteroid as asteroidModule
-from . import projectile as projectileModule
 
 class Spaceship(Object):
 
-    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, ability_duration = 5, weapon: weaponModule.Weapon = None, bounds = (WIDTH, HEIGHT), source = None, control = keyboard, team = team.TEAM1):
+    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, ability_duration = 5, weapon: weaponModule.Weapon = None, bounds = (WIDTH, HEIGHT), source = None, control = keyboard, team = Team.TEAM1):
         super().__init__(image, pos, health=health, speed=speed, bounds=bounds, source=source, team=team)
         # Initialize additional variables
         self.ability = ability
@@ -90,19 +88,15 @@ class Spaceship(Object):
         super().damage( damage )
 
     def collide(self, object):
-        #TODO don't forget to use the new attribute "team" in Object
         super().collide(object)
-        if isinstance(object, asteroidModule.Asteroid):
+        if object.type == Type.ASTEROID:
             self.damage(1)
-        elif isinstance(object, projectileModule.Projectile):
-            if object.source != self:
-                self.damage(object.damage)
-        elif isinstance(object, Spaceship):
-            self.damage(1)
+        elif object.type == Type.PROJECTILE and object.team != self.team:
+            self.damage(object.damage)
 
 class SpaceshipClone():
 
-    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, ability_duration = 5, weapon: weaponModule.Weapon = None, bounds = (WIDTH, HEIGHT), source = None, control = keyboard, team = team.TEAM1):
+    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, ability_duration = 5, weapon: weaponModule.Weapon = None, bounds = (WIDTH, HEIGHT), source = None, control = keyboard, team = Team.TEAM1):
         self.image = image
         self.pos = pos
         self.speed = speed

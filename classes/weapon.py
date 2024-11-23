@@ -1,4 +1,4 @@
-from utils import ProjectileImage
+from globals import ProjectileImage
 from .projectile import Projectile
 from pgzero.clock import clock
 

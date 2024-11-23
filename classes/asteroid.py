@@ -1,8 +1,5 @@
 from utils import Object
-from globals import WIDTH, HEIGHT
-from . import spaceship
-from . import projectile
-from . import reflector
+from globals import WIDTH, HEIGHT, Type
 
 class Asteroid(Object):
 
@@ -17,9 +14,9 @@ class Asteroid(Object):
 
     def collide(self, object):
         super().collide(object)
-        if isinstance(object, spaceship.Spaceship):
+        if object.type == Type.SPACESHIP:
             self.alive = False
-        if isinstance(object, reflector.Reflector):
+        elif object.type == Type.REFLECTOR:
             self.direction = -self.direction
-        elif isinstance(object, projectile.Projectile):
+        elif object.type == Type.PROJECTILE:
             self.damage( object.damage )
