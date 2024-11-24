@@ -9,7 +9,7 @@ class Bar():
         draw.rect(surface, color_front, rect_front, border_radius = 4)
         return surface
 
-    def __init__(self, pos, size, color_front, color_back, max_value, visible = True, reversed = False):
+    def __init__(self, pos, size, color_front, color_back, max_value = 1, visible = True, reversed = False):
         self.visible = visible
         self.pos = pos
         self.size = size

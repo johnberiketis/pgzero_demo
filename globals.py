@@ -4,6 +4,7 @@ WIDTH = 1000
 HEIGHT = 800
 ASTEROIDS_SPEED = 1
 ASTEROIDS_PER_SECOND = 0.4
+OBJECTS_LIMIT = 60
 
 class Team(IntEnum):
     ENEMY = -1
@@ -26,6 +27,17 @@ class ProjectileImage(Enum):
     TYPE5 = 'projectile_5'
     TYPE6 = 'projectile_bullet'
     TYPEBALL = 'projectile_ball'
+
+spaceship_images = [
+    'spaceship_aqua_stripe',
+    'spaceship_black',
+    'spaceship_blue',
+    'spaceship_green',
+    'spaceship_purple',
+    'spaceship_red_stripe',
+    'spaceship_red',
+    'spaceship_yellow'
+]
  
 asteroid_images = [
     'asteroid1',

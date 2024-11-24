@@ -6,8 +6,8 @@ from . import weapon as weaponModule
 
 class Spaceship(Object):
 
-    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, ability_duration = 5, weapon: weaponModule.Weapon = None, bounds = (WIDTH, HEIGHT), source = None, control = keyboard, team = Team.TEAM1):
-        super().__init__(image, pos, health=health, speed=speed, bounds=bounds, source=source, team=team)
+    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, ability_duration = 5, weapon: weaponModule.Weapon = None, bounds = (WIDTH, HEIGHT), source = None, control = keyboard, team = Team.TEAM1, direction = -1):
+        super().__init__(image, pos, health=health, speed=speed, bounds=bounds, source=source, team=team, direction=direction)
         # Initialize additional variables
         self.ability = ability
         self.ability_duration = ability_duration if ability_duration > 0 else 5
@@ -24,7 +24,7 @@ class Spaceship(Object):
 
         # The self.default is the original object without any effects applied 
         # This object is used to reset the state of the character
-        self.default = SpaceshipClone(image, pos, health, speed, ability, weapon=self.weapon)
+        self.default = SpaceshipClone(image, pos, health, speed, ability, weapon=self.weapon, direction=self.direction, angle=self.angle)
 
         self.has_active_ability = False
         self.ability_timer = 0
@@ -37,6 +37,8 @@ class Spaceship(Object):
         self.image = self.default.image
         self.collidable = True
         self.childs = self.default.childs
+        self.angle = self.default.angle
+        self.direction = self.default.direction
 
         self.weapon.firerate = self.default.weapon.firerate
         self.weapon.barrels = self.default.weapon.barrels
@@ -50,6 +52,9 @@ class Spaceship(Object):
     def reset_actions(self):
         # Reset the character's action points
         self.actions = self.default.actions
+
+    def set_image(self, image):
+        self.image = image
 
     def update(self):
         super().update()
@@ -89,16 +94,18 @@ class Spaceship(Object):
 
     def collide(self, object):
         super().collide(object)
-        if object.type == Type.ASTEROID:
+        if object.type == Type.ASTEROID and object.team != self.team:
             self.damage(1)
         elif object.type == Type.PROJECTILE and object.team != self.team:
             self.damage(object.damage)
 
 class SpaceshipClone():
 
-    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, ability_duration = 5, weapon: weaponModule.Weapon = None, bounds = (WIDTH, HEIGHT), source = None, control = keyboard, team = Team.TEAM1):
+    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, ability_duration = 5, weapon: weaponModule.Weapon = None, bounds = (WIDTH, HEIGHT), source = None, control = keyboard, team = Team.TEAM1, angle = 0,  direction = -1):
         self.image = image
         self.pos = pos
+        self.angle = angle
+        self.direction = direction
         self.speed = speed
         self.health = health
         self.bounds = bounds

@@ -9,16 +9,18 @@ class Projectile(Object):
 
     def update(self):
         self.y += self.speed*self.direction
-        if self.y <= -50 or self.y >= self.bounds[1] + 50:
+        if self.y <= -10 or self.y >= self.bounds[1] + 10:
             self.kill()
 
     def collide(self, object):
         #TODO don't forget to use the new attribute "team" in Object
         super().collide(object)
-        if object.team != self.team:
+        if object.type != Type.REFLECTOR and object.team != self.team:
             self.alive = False
         elif object.type == Type.REFLECTOR and object.team != self.team:
             self.direction = -self.direction
+            self.team = object.team
+            self.angle += 180
     
     def copy(self):
         return Projectile( image=self.image, pos=self.pos, speed=self.speed, health=self.health, direction=self.direction, spin=self.spin, angle=self.angle, )

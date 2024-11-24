@@ -1,20 +1,20 @@
 import pgzrun
 import random
-from laboratory import character, agent
+from laboratory import player, enemy, agent
 from classes.asteroid import Asteroid
 from classes.spaceship import Spaceship
 from gui import Bar
 from pygame import Color
-import sys
 from utils import Background, CollisionInformation
-from globals import WIDTH, HEIGHT, ASTEROIDS_SPEED, ASTEROIDS_PER_SECOND, asteroid_images
+from globals import WIDTH, HEIGHT, ASTEROIDS_SPEED, ASTEROIDS_PER_SECOND, asteroid_images, Team, OBJECTS_LIMIT
 from world import world
 
 background = Background('background2')
 
-healthbar = Bar((5,HEIGHT - 20), (180,10), Color(128, 0, 0), Color(50, 50, 50), 10)
-abilitybar = Bar((5,HEIGHT - 35), (180,10), Color(0, 200, 0), Color(50, 50, 50), 10)
-cooldownbar = Bar((5,HEIGHT - 35), (180,10), Color(0, 150, 0), Color(50, 50, 50), 10, reversed = True)
+enemybar = Bar((5, 5), (WIDTH - 10,10), Color(64, 0, 0), Color(50, 50, 50))
+healthbar = Bar((5,HEIGHT - 20), (180,10), Color(128, 0, 0), Color(50, 50, 50))
+abilitybar = Bar((5,HEIGHT - 35), (180,10), Color(0, 200, 0), Color(50, 50, 50))
+cooldownbar = Bar((5,HEIGHT - 35), (180,10), Color(0, 150, 0), Color(50, 50, 50), reversed = True)
 
 def update_enviroment():
 
@@ -22,11 +22,14 @@ def update_enviroment():
         Asteroid(image = random.choice(asteroid_images), 
                             pos = (random.randint(-80,WIDTH), -30),
                             angle = random.randint(1,360),
-                            speed=ASTEROIDS_SPEED
+                            speed=ASTEROIDS_SPEED,
+                            team = Team.TEAM2
                            )
 
 def update_objects():
-
+    
+    # print(len(world.objects))
+    world.objects = world.objects[:OBJECTS_LIMIT]
     for obj in world.objects:
         
         #TODO collitions should be handled by event (enter, exit) 
@@ -42,25 +45,28 @@ def update_objects():
 
     for obj in world.objects:
         if obj.alive == False:
-            if obj == character:
+            if obj == player:
                 #GAME OVER
                 print("GAME OVER")
-                sys.exit(0)
+            elif obj == enemy:
+                #VICTORY
+                print("YOU WON")
             world.remove_object(obj)
             del obj
 
 def update_gui():
 
-    healthbar.update(character.health, character.max_health)
-    if character.ability_timer > 0:
-        abilitybar.update(character.ability_timer, character.ability_duration*60)
-    if character.cooldown_timer > 0:
-        cooldownbar.update(character.cooldown_timer, character.cooldown*60)
+    enemybar.update(enemy.health, enemy.max_health)
+    healthbar.update(player.health, player.max_health)
+    if player.ability_timer > 0:
+        abilitybar.update(player.ability_timer, player.ability_duration*60)
+    if player.cooldown_timer > 0:
+        cooldownbar.update(player.cooldown_timer, player.cooldown*60)
 
 ##### GAME LOOP #####
 def update():
 
-    agent.think(None)
+    agent.think([player])
     update_enviroment()
     update_objects()
     update_gui()
@@ -71,9 +77,10 @@ def draw():
     for obj in world.objects:
         obj.draw()
 
+    enemybar.draw()
     healthbar.draw()
     cooldownbar.draw()
-    if character.ability_timer > 0:
+    if player.ability_timer > 0:
         abilitybar.draw()
     
 pgzrun.go()

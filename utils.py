@@ -17,12 +17,16 @@ class Object(Actor):
         self.alive = alive
         self.collidable = collidable
         self.spin = spin
-        self.angle = angle
         self.team = team
         self.source = source
         self.parent = None
         self.childs = []
         world.add_object(self)
+        if direction == 1:
+            self.angle = 180
+        else:
+            self.angle = 0
+        
         if self.timespan > 0:
             clock.schedule_unique(self.kill, self.timespan)
 
