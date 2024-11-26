@@ -6,7 +6,7 @@ class Agent():
     def __init__(self, name, puppet = None):
         self.name = name
         self.puppet = puppet
-        self.right = True
+        self.right = False
         self.left = False
         self.lshift = False
         self.space = True

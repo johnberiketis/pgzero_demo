@@ -1,16 +1,20 @@
-from enum import Enum, IntEnum
+from enum import IntEnum
 
 WIDTH = 1000
 HEIGHT = 800
 ASTEROIDS_SPEED = 1
 ASTEROIDS_PER_SECOND = 0.4
-OBJECTS_LIMIT = 60
+ASTEROIDS_DAMAGE = 10
+OBJECTS_LIMIT = 80
+ABILITY_DURATION_LIMIT = 20
+
+PLAYER_START_POS = (WIDTH//2, HEIGHT-50)
+ENEMY_START_POS = (WIDTH//2, 60)
 
 class Team(IntEnum):
     ENEMY = -1
     NEUTRAL = 0
-    TEAM1 = 1
-    TEAM2 = 2
+    PLAYER = 1
 
 class Type(IntEnum):
     SPACESHIP = 0
@@ -18,17 +22,18 @@ class Type(IntEnum):
     PROJECTILE = 2
     REFLECTOR = 3
 
-class ProjectileImage(Enum):
-    TYPE0 = 'projectile'
-    TYPE1 = 'projectile_1'
-    TYPE2 = 'projectile_2'
-    TYPE3 = 'projectile_3'
-    TYPE4 = 'projectile_4'
-    TYPE5 = 'projectile_5'
-    TYPE6 = 'projectile_bullet'
-    TYPEBALL = 'projectile_ball'
+IMAGES_PROJECTILES = [
+    'projectile',
+    'projectile_1',
+    'projectile_2',
+    'projectile_3',
+    'projectile_4',
+    'projectile_5',
+    'projectile_ball',
+    'projectile_bullet'
+]
 
-spaceship_images = [
+IMAGES_SPACESHIPS = [
     'spaceship_aqua_stripe',
     'spaceship_black',
     'spaceship_blue',
@@ -39,7 +44,7 @@ spaceship_images = [
     'spaceship_yellow'
 ]
  
-asteroid_images = [
+IMAGES_ASTEROIDS = [
     'asteroid1',
     'asteroid2',
     'asteroid3',

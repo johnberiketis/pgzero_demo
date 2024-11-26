@@ -13,14 +13,14 @@ class Projectile(Object):
             self.kill()
 
     def collide(self, object):
-        #TODO don't forget to use the new attribute "team" in Object
         super().collide(object)
-        if object.type != Type.REFLECTOR and object.team != self.team:
-            self.alive = False
-        elif object.type == Type.REFLECTOR and object.team != self.team:
-            self.direction = -self.direction
-            self.team = object.team
-            self.angle += 180
+        if object.team != self.team:
+            if object.type == Type.REFLECTOR:
+                self.direction = -self.direction
+                self.team = object.team
+                self.angle += 180
+            else:
+                self.alive = False
     
     def copy(self):
-        return Projectile( image=self.image, pos=self.pos, speed=self.speed, health=self.health, direction=self.direction, spin=self.spin, angle=self.angle, )
+        return Projectile( image=self.image, pos=self.pos, speed=self.speed, health=self.health, direction=self.direction, spin=self.spin, angle=self.angle)

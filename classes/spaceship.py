@@ -1,18 +1,27 @@
 from pgzero.clock import clock
 from pgzero.keyboard import keyboard
 from utils import Object
-from globals import WIDTH, HEIGHT, Type, Team
+from globals import WIDTH, HEIGHT, PLAYER_START_POS, ENEMY_START_POS, ASTEROIDS_DAMAGE, ABILITY_DURATION_LIMIT, Type, Team
 from . import weapon as weaponModule
 
 class Spaceship(Object):
 
-    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, ability_duration = 5, weapon: weaponModule.Weapon = None, bounds = (WIDTH, HEIGHT), source = None, control = keyboard, team = Team.TEAM1, direction = -1):
+    def __init__(self, image, health = 10, speed = 5, ability = None, ability_duration = 6, weapon: weaponModule.Weapon = None, bounds = (WIDTH, HEIGHT), source = None, control = keyboard, team = Team.PLAYER, direction = -1):
+        if team == Team.ENEMY:
+            pos = ENEMY_START_POS
+        else:
+            pos = PLAYER_START_POS
         super().__init__(image, pos, health=health, speed=speed, bounds=bounds, source=source, team=team, direction=direction)
-        # Initialize additional variables
         self.ability = ability
-        self.ability_duration = ability_duration if ability_duration > 0 else 5
-        self.weapon = weapon.copy() if weapon else weaponModule.Weapon(firerate=3, barrels=1, damage=5)
-        self.weapon.set_mount(self)
+
+        if ability_duration > ABILITY_DURATION_LIMIT:
+            ability_duration = ABILITY_DURATION_LIMIT
+        elif ability_duration <= 0:
+            ability_duration = 1
+
+        self.ability_duration = ability_duration
+        self.weapon = weapon.assemble(self) if weapon else weaponModule.Weapon(firerate=3, barrels=1, damage=5, mount=self)
+        # self.weapon.set_mount(self)
         self.control = control
 
         # Every action point can activate one ability
@@ -22,16 +31,14 @@ class Spaceship(Object):
         self.cooldown = 8
         self.cooldown_timer = 0
 
-        # The self.default is the original object without any effects applied 
-        # This object is used to reset the state of the character
-        self.default = SpaceshipClone(image, pos, health, speed, ability, weapon=self.weapon, direction=self.direction, angle=self.angle)
-
-        self.has_active_ability = False
         self.ability_timer = 0
+
+        # The self.default is the original object without any effects applied 
+        # This object is used to reset the state of the character after an ability ends
+        self.default = SpaceshipClone(image, pos, health, speed, ability, weapon=self.weapon, direction=self.direction, angle=self.angle)
 
     def reset(self):
         # Reset the character to its original state
-        self.has_active_ability = False
         self.speed = self.default.speed
         self.cooldown = self.default.cooldown
         self.image = self.default.image
@@ -42,8 +49,8 @@ class Spaceship(Object):
 
         self.weapon.firerate = self.default.weapon.firerate
         self.weapon.barrels = self.default.weapon.barrels
+        self.weapon.damage = self.default.weapon.damage
         self.weapon.calc_muzzles_pos()
-        self.weapon.set_mount(self)
 
         #After the cooldown reset the action points
         self.cooldown_timer = self.cooldown*60
@@ -80,7 +87,6 @@ class Spaceship(Object):
         # then activate the characters ability 
         if self.control.lshift and self.actions == 1:
             self.ability(self)
-            self.has_active_ability = True
             self.ability_timer = self.ability_duration*60
             self.actions = 0
             #After the duration reset the ability's effects
@@ -94,14 +100,15 @@ class Spaceship(Object):
 
     def collide(self, object):
         super().collide(object)
-        if object.type == Type.ASTEROID and object.team != self.team:
-            self.damage(1)
-        elif object.type == Type.PROJECTILE and object.team != self.team:
-            self.damage(object.damage)
+        if object.team != self.team:
+            if object.type == Type.ASTEROID:
+                self.damage(ASTEROIDS_DAMAGE)
+            elif object.type == Type.PROJECTILE:
+                self.damage(object.damage)
 
 class SpaceshipClone():
 
-    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, ability_duration = 5, weapon: weaponModule.Weapon = None, bounds = (WIDTH, HEIGHT), source = None, control = keyboard, team = Team.TEAM1, angle = 0,  direction = -1):
+    def __init__(self, image, pos=(500, 750), health = 10, speed = 5, ability = None, ability_duration = 5, weapon: weaponModule.Weapon = None, bounds = (WIDTH, HEIGHT), source = None, control = keyboard, team = Team.PLAYER, angle = 0,  direction = -1):
         self.image = image
         self.pos = pos
         self.angle = angle
@@ -113,12 +120,10 @@ class SpaceshipClone():
         self.team = team
         self.ability = ability
         self.ability_duration = ability_duration if ability_duration > 0 else 5
-        self.weapon = weapon.copy() if weapon else weaponModule.Weapon(firerate=3, barrels=1, damage=5)
-        self.weapon.set_mount(self)
+        self.weapon = weapon.assemble(self) if weapon else weaponModule.Weapon(firerate=3, barrels=1, damage=5, mount=self)
         self.control = control
         self.actions = 1
         self.cooldown = 8
         self.cooldown_timer = 0
-        self.has_active_ability = False
         self.ability_timer = 0
         self.childs = []

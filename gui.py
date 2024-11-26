@@ -1,5 +1,6 @@
 from pygame import draw, Surface, Rect, Color
 from pgzero import game
+from globals import WIDTH, HEIGHT
 
 class Bar():
 
@@ -14,8 +15,8 @@ class Bar():
         self.pos = pos
         self.size = size
         self.surface = self.generate_surface(size, color_front)
-        self.color_front = color_front
-        self.color_back = color_back
+        self.color_front = Color(color_front)
+        self.color_back = Color(color_back)
         self.value = max_value
         self.max_value = max_value
         self.reversed = reversed
@@ -41,3 +42,7 @@ class Bar():
         if self.visible:
             game.screen.blit(self.surface, self.pos)
     
+enemybar        = Bar((5, 5),           (WIDTH - 10,10),    (64, 0, 0),     (50, 50, 50))
+healthbar       = Bar((5,HEIGHT - 20),  (180,10),           (128, 0, 0),    (50, 50, 50))
+abilitybar      = Bar((5,HEIGHT - 35),  (180,10),           (0, 200, 0),    (50, 50, 50))
+cooldownbar     = Bar((5,HEIGHT - 35),  (180,10),           (0, 150, 0),    (50, 50, 50), reversed = True)

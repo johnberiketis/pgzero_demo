@@ -1,40 +1,23 @@
 import pgzrun
 import random
 from laboratory import player, enemy, agent
-from classes.asteroid import Asteroid
-from classes.spaceship import Spaceship
-from gui import Bar
-from pygame import Color
-from utils import Background, CollisionInformation
-from globals import WIDTH, HEIGHT, ASTEROIDS_SPEED, ASTEROIDS_PER_SECOND, asteroid_images, Team, OBJECTS_LIMIT
-from world import world
-
-background = Background('background2')
-
-enemybar = Bar((5, 5), (WIDTH - 10,10), Color(64, 0, 0), Color(50, 50, 50))
-healthbar = Bar((5,HEIGHT - 20), (180,10), Color(128, 0, 0), Color(50, 50, 50))
-abilitybar = Bar((5,HEIGHT - 35), (180,10), Color(0, 200, 0), Color(50, 50, 50))
-cooldownbar = Bar((5,HEIGHT - 35), (180,10), Color(0, 150, 0), Color(50, 50, 50), reversed = True)
+from classes.asteroid import generate_random_asteroid
+from gui import enemybar, healthbar, abilitybar, cooldownbar 
+from utils import CollisionInformation
+from globals import WIDTH, HEIGHT, ASTEROIDS_PER_SECOND, OBJECTS_LIMIT
+from utils import background, world
 
 def update_enviroment():
 
     if random.random() < (ASTEROIDS_PER_SECOND/60):
-        Asteroid(image = random.choice(asteroid_images), 
-                            pos = (random.randint(-80,WIDTH), -30),
-                            angle = random.randint(1,360),
-                            speed=ASTEROIDS_SPEED,
-                            team = Team.TEAM2
-                           )
+        generate_random_asteroid()
 
 def update_objects():
-    
-    # print(len(world.objects))
+
     world.objects = world.objects[:OBJECTS_LIMIT]
     for obj in world.objects:
         
         #TODO collitions should be handled by event (enter, exit) 
-        # and pass a "read only" or a Collition class object at the obj.collitions method
-        # obj should only have a representaton of the collided object not the object itself
         if obj.collidable:
             collided_objects = [o for o in world.objects if o != obj and o.collidable and obj.colliderect(o)] #Exclude self and objects with no collision
             for collided_object in collided_objects:
@@ -63,24 +46,37 @@ def update_gui():
     if player.cooldown_timer > 0:
         cooldownbar.update(player.cooldown_timer, player.cooldown*60)
 
-##### GAME LOOP #####
-def update():
+def draw_enviroment():
 
-    agent.think([player])
-    update_enviroment()
-    update_objects()
-    update_gui()
-
-##### MAIN DRAW #####
-def draw():
     background.draw()
+
+def draw_objects():
+
     for obj in world.objects:
         obj.draw()
+
+def draw_gui():
 
     enemybar.draw()
     healthbar.draw()
     cooldownbar.draw()
     if player.ability_timer > 0:
         abilitybar.draw()
+
+##### GAME LOOP #####
+def update():
+
+    agent.think([player])
+
+    update_enviroment()
+    update_objects()
+    update_gui()
+
+##### DRAW LOOP #####
+def draw():
+
+    draw_enviroment()
+    draw_objects()
+    draw_gui()
     
 pgzrun.go()

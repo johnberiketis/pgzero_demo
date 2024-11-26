@@ -1,10 +1,11 @@
-from globals import ProjectileImage
 from .projectile import Projectile
 from pgzero.clock import clock
+from globals import IMAGES_PROJECTILES
+import math
 
 class Weapon():
 
-    def __init__(self, firerate = 3, barrels = 1, damage = 1, speed = 8):
+    def __init__(self, firerate = 3, barrels = 1, damage = 1, speed = 8, mount = None):
         self.mount = None,
         self.firerate = firerate
         self.barrels = 4 if barrels > 4 else barrels
@@ -13,9 +14,11 @@ class Weapon():
         self.muzzles_pos = []
         self.calc_muzzles_pos()
         self.gun_ready = True
+        self.points = (damage * barrels * firerate) + speed
+        self.mount = mount
 
-    def copy(self):
-        return Weapon(firerate=self.firerate, barrels=self.barrels, damage=self.damage, speed=self.speed)
+    def assemble(self, mount):
+        return Weapon(firerate=self.firerate, barrels=self.barrels, damage=self.damage, speed=self.speed, mount=mount)
 
     def shoot(self):
         if self.gun_ready and self.mount:
@@ -29,8 +32,8 @@ class Weapon():
     def reload(self):
         self.gun_ready = True
     
-    def set_mount(self, obj):
-        self.mount = obj
+    # def set_mount(self, obj):
+    #     self.mount = obj
 
     def set_barrels(self, barrels):
         self.barrels = barrels
@@ -48,18 +51,5 @@ class Weapon():
             self.muzzles_pos = [(0,-50)]
     
     def get_image(self):
-        match self.damage:
-            case 1:
-                return ProjectileImage.TYPE0.value
-            case 2:
-                return ProjectileImage.TYPE1.value
-            case 3:
-                return ProjectileImage.TYPE2.value
-            case 4:
-                return ProjectileImage.TYPE3.value
-            case 5:
-                return ProjectileImage.TYPE4.value
-            case 6:
-                return ProjectileImage.TYPE5.value
-            case _:
-                return ProjectileImage.TYPE6.value
+        damage_index = math.ceil(self.damage)-1
+        return IMAGES_PROJECTILES[damage_index] if (damage_index) < len(IMAGES_PROJECTILES) else IMAGES_PROJECTILES[-1]

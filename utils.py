@@ -1,8 +1,6 @@
-from enum import Enum, IntEnum
 from pgzero.clock import clock
 from pgzero.actor import Actor
 from globals import WIDTH, HEIGHT, Team, Type
-from world import world
    
 class Object(Actor):
         
@@ -78,6 +76,21 @@ class Background(Actor):
     def __init__(self, image):
         super().__init__(image)
 
+class World():
+
+    def __init__(self):
+        self.objects = []
+
+    def add_object(self, object):
+        self.objects.append(object)
+
+    def remove_object(self, object):
+        self.objects.remove(object)
+        del object
+
+    def extend_objects(self, object_list):
+        self.objects.extend(object_list)
+
 class CollisionInformation():
 
     def __init__(self, object):
@@ -85,6 +98,7 @@ class CollisionInformation():
         self.team = object.team if object.team else Team.NEUTRAL
         self.damage = object.damage if object.damage else 0
         
-
+background = Background('background2')
+world = World()
 
 
