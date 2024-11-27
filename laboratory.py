@@ -84,8 +84,8 @@ weapons = [
 # malware = Spaceship(image = 'spaceship_black', health = 50, speed = 4, ability=reflection, ability_duration = 8, weapon = dual_plasma)
 
 enemy_image = 'spaceship_black'
-enemy_ability = random.choice(abilities)
-# enemy_ability = too_many_guns
+# enemy_ability = random.choice(abilities)
+enemy_ability = invisibility
 enemy_weapon = random.choice(weapons)
 # enemy_weapon = super_auto
 enemy_speed = 4
@@ -93,7 +93,7 @@ enemy = Spaceship(image = enemy_image, health = 80, speed = enemy_speed, ability
 
 player_image = random.choice(IMAGES_SPACESHIPS)
 # player_ability = random.choice(abilities)
-player_ability = buff_up
+player_ability = invisibility
 # player_weapon = random.choice(weapons)
 player_weapon = gatling_gun
 player_speed = random.choice([5,6,7])

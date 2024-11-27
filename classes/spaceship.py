@@ -61,7 +61,10 @@ class Spaceship(Object):
         self.actions = self.default.actions
 
     def set_image(self, image):
+        temp_angle = self.angle
+        self.angle = 0 
         self.image = image
+        self.angle = temp_angle
 
     def update(self):
         super().update()
