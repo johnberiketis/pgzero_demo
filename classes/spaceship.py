@@ -50,7 +50,6 @@ class Spaceship(Object):
         self.weapon.firerate = self.default.weapon.firerate
         self.weapon.barrels = self.default.weapon.barrels
         self.weapon.damage = self.default.weapon.damage
-        self.weapon.calc_muzzles_pos()
 
         #After the cooldown reset the action points
         self.cooldown_timer = self.cooldown*60

@@ -29,6 +29,7 @@ def update_objects():
     for obj in world.objects:
         if obj.alive == False:
             if obj == player:
+                #LOSS
                 world.end_game = -1
                 enemy.collidable = False
             elif obj == enemy:

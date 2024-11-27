@@ -106,7 +106,11 @@ class CollisionInformation():
         self.type = Type[object.__class__.__name__.upper()]
         self.team = object.team if object.team else Team.NEUTRAL
         self.damage = object.damage if object.damage else 0
-        
+
+
+def clamp_value(value, smallest, largest): 
+    return max(smallest, min(value, largest))
+
 background = Background('background2')
 world = World()
 

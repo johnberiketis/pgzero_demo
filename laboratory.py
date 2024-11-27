@@ -24,7 +24,7 @@ def invisibility(spaceship : Spaceship):
 
 def too_many_guns(spaceship : Spaceship):
     # Give character 4 weapon barrels
-    spaceship.weapon.set_barrels(4)
+    spaceship.weapon.barrels = 4
 
 def machine_gun(spaceship: Spaceship):
     # Firerate boost
@@ -33,7 +33,6 @@ def machine_gun(spaceship: Spaceship):
 def reflection(spaceship: Spaceship):
     # A reflective shield
     reflector = Reflector(image = 'metal_wall', pos = (spaceship.x, spaceship.y + 60*spaceship.direction), timespan = spaceship.ability_duration, team=spaceship.team)
-    spaceship.collidable = False
     spaceship.add_child( reflector )
 
 def buff_up(spaceship: Spaceship):
@@ -54,8 +53,8 @@ abilities = [
 ######################################
 
 #TODO implement point system weapon.points = (damage * barrels * firerate) + speed
-cannon      = Weapon(firerate = 2, barrels = 1, damage = 8, speed = 5)  # 21
-super_auto  = Weapon(firerate = 9, barrels = 1, damage = 1, speed = 12) # 21
+cannon      = Weapon(firerate = 3, barrels = 1, damage = 8, speed = 5)  # 29
+super_auto  = Weapon(firerate = 9, barrels = 1, damage = 1.5, speed = 12) # 25.5
 automatic   = Weapon(firerate = 5, barrels = 1, damage = 4, speed = 11) # 31
 dual        = Weapon(firerate = 3, barrels = 2, damage = 3, speed = 8)  # 26
 dual_plasma = Weapon(firerate = 2, barrels = 2, damage = 5, speed = 5)  # 25
@@ -83,18 +82,18 @@ weapons = [
 # malware = Spaceship(image = 'spaceship_black', health = 50, speed = 4, ability=reflection, ability_duration = 8, weapon = dual_plasma)
 
 enemy_image = 'spaceship_black'
-enemy_ability = random.choice(abilities)
-# enemy_ability = invisibility
+# enemy_ability = random.choice(abilities)
+enemy_ability = reflection
 enemy_weapon = random.choice(weapons)
 # enemy_weapon = super_auto
 enemy_speed = 4
 enemy = Spaceship(image = enemy_image, health = 80, speed = enemy_speed, ability=enemy_ability, ability_duration = 6, weapon = enemy_weapon, team=Team.ENEMY, direction=1)
 
 player_image = random.choice(IMAGES_SPACESHIPS)
-player_ability = random.choice(abilities)
-# player_ability = invisibility
-player_weapon = random.choice(weapons)
-# player_weapon = gatling_gun
+# player_ability = random.choice(abilities)
+player_ability = too_many_guns
+# player_weapon = random.choice(weapons)
+player_weapon = gatling_gun
 player_speed = random.choice([5,6,7])
 player = Spaceship(image = player_image, health = 80, speed = player_speed, ability=player_ability, ability_duration = 6, weapon = player_weapon)
 
