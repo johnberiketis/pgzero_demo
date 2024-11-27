@@ -4,7 +4,7 @@ from globals import WIDTH, HEIGHT, Team, Type
    
 class Object(Actor):
         
-    def __init__(self, image, pos, speed = 0, health = 1, direction = 0, timespan = -1, spin = 0, angle = 0, bounds = (WIDTH, HEIGHT), alive = True, collidable = True, source = None, team = Team.NEUTRAL):
+    def __init__(self, image, pos, speed = 0, health = 1, direction = 0, timespan = -1, spin = 0, angle = 0, bounds = (WIDTH, HEIGHT), alive = True, damage = 0, collidable = True, source = None, team = Team.NEUTRAL):
         super().__init__(image, pos)
         self.speed = speed
         self.health = health
@@ -14,6 +14,7 @@ class Object(Actor):
         self.bounds = bounds
         self.alive = alive
         self._collidable = collidable
+        self.damage = damage
         self.spin = spin
         self.team = team
         self.source = source
@@ -69,7 +70,7 @@ class Object(Actor):
         self.dx = self.x - obj.x
         self.dy = self.y - obj.y
 
-    def damage(self, damage):
+    def _damage(self, damage):
         self.health -= damage
 
     def collide(self, object):

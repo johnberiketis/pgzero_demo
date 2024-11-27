@@ -46,7 +46,7 @@ class Weapon():
     
     @speed.setter
     def speed(self, value):
-        self._speed = clamp_value(value, 0, 14)
+        self._speed = clamp_value(value, 0, 15)
 
     def assemble(self, mount):
         return Weapon(firerate=self._firerate, barrels=self._barrels, damage=self._damage, speed=self._speed, mount=mount)

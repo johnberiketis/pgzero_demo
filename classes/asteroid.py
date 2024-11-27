@@ -22,7 +22,7 @@ class Asteroid(Object):
                 self.direction = -self.direction
                 self.team = object.team
             elif object.type == Type.PROJECTILE:
-                self.damage( object.damage )
+                self._damage( object.damage )
 
 def generate_random_asteroid():
     Asteroid( image = random.choice(IMAGES_ASTEROIDS), 

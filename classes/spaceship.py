@@ -1,8 +1,10 @@
 from pgzero.clock import clock
 from pgzero.keyboard import keyboard
-from utils import Object
+from utils import Object, clamp_value
 from globals import WIDTH, HEIGHT, PLAYER_START_POS, ENEMY_START_POS, ASTEROIDS_DAMAGE, ABILITY_DURATION_LIMIT, Type, Team
 from . import weapon as weaponModule
+from . import reflector as reflectorModule
+from inspect import signature
 
 class Spaceship(Object):
 
@@ -13,31 +15,26 @@ class Spaceship(Object):
             pos = PLAYER_START_POS
         super().__init__(image, pos, health=health, speed=speed, bounds=bounds, source=source, team=team, direction=direction)
         self.ability = ability
-
-        if ability_duration > ABILITY_DURATION_LIMIT:
-            ability_duration = ABILITY_DURATION_LIMIT
-        elif ability_duration <= 0:
-            ability_duration = 1
-
         self.ability_duration = ability_duration
-        self.weapon = weapon.assemble(self) if weapon else weaponModule.Weapon(firerate=3, barrels=1, damage=5, mount=self)
+        self.weapon = weapon.assemble(self) if weapon else weaponModule.Weapon(firerate=3, barrels=1, damage=5, mount=self) # TODO make private + defensive programming
         # self.weapon.set_mount(self)
-        self.control = control
+        self.control = control # TODO make private + defensive programming
 
         # Every action point can activate one ability
-        self.actions = 1
+        self._actions = 1
 
         # After an ability there is a cooldown that will reset the action points
-        self.cooldown = 8
-        self.cooldown_timer = 0
+        self.cooldown = 8 # TODO make private + defensive programming
+        self.cooldown_timer = 0 # TODO make private + defensive programming
 
-        self.ability_timer = 0
+        self.ability_timer = 0 # TODO make private + defensive programming
 
         # The self.default is the original object without any effects applied 
         # This object is used to reset the state of the character after an ability ends
-        self.default = SpaceshipClone(image, pos, health, speed, ability, weapon=self.weapon, direction=self.direction, angle=self.angle)
+        # TODO Make SpaceshipClone a dictionary
+        self.default = SpaceshipClone(image, pos, health, speed, ability, weapon=self.weapon, direction=self.direction, angle=self.angle) # TODO make private + defensive programming
 
-    def reset(self):
+    def _reset(self):
         # Reset the character to its original state
         self.speed = self.default.speed
         self.cooldown = self.default.cooldown
@@ -50,14 +47,29 @@ class Spaceship(Object):
         self.weapon.firerate = self.default.weapon.firerate
         self.weapon.barrels = self.default.weapon.barrels
         self.weapon.damage = self.default.weapon.damage
+        self.weapon.speed = self.default.weapon.speed
 
         #After the cooldown reset the action points
         self.cooldown_timer = self.cooldown*60
-        clock.schedule_unique(self.reset_actions, self.cooldown)
+        clock.schedule_unique(self._reset_actions, self.cooldown)
 
-    def reset_actions(self):
+    def _reset_actions(self):
         # Reset the character's action points
-        self.actions = self.default.actions
+        self._actions = self.default._actions
+
+    @property
+    def ability(self):
+        return self._ability
+
+    @ability.setter
+    def ability(self, method):
+        if not callable(method):
+            method = lambda a: a
+        else:
+            sig = signature(method)
+            if len(sig.parameters) != 1:
+                method = lambda a: a
+        self._ability = method
 
     @property
     def collidable(self):
@@ -66,12 +78,20 @@ class Spaceship(Object):
     @collidable.setter
     def collidable(self, value: bool):
         if value:
-            self.set_image(self.default.image)
+            self._set_image(self.default.image)
         else:
-            self.set_image('spaceship_transparent')
+            self._set_image('spaceship_transparent')
         self._collidable = value
+    
+    @property
+    def ability_duration(self):
+        return self._ability_duration
 
-    def set_image(self, image):
+    @ability_duration.setter
+    def ability_duration(self, value):
+        self._ability_duration = clamp_value(value, 1, ABILITY_DURATION_LIMIT)
+
+    def _set_image(self, image):
         temp_angle = self.angle
         self.angle = 0 
         self.image = image
@@ -99,26 +119,30 @@ class Spaceship(Object):
 
         # If left shift key is pressed and you have at least 1 action available
         # then activate the characters ability 
-        if self.control.lshift and self.actions == 1:
-            self.ability(self)
+        if self.control.lshift and self._actions == 1:
+            self._ability(self)
             self.ability_timer = self.ability_duration*60
-            self.actions = 0
+            self._actions = 0
             #After the duration reset the ability's effects
-            clock.schedule_unique(self.reset, self.ability_duration)
+            clock.schedule_unique(self._reset, self.ability_duration)
         
         if self.control.space:
             self.weapon.shoot()
 
-    def damage(self, damage):
-        super().damage( damage )
+    def _damage(self, damage):
+        super()._damage( damage )
 
     def collide(self, object):
         super().collide(object)
         if object.team != self.team:
             if object.type == Type.ASTEROID:
-                self.damage(ASTEROIDS_DAMAGE)
+                self._damage(ASTEROIDS_DAMAGE)
             elif object.type == Type.PROJECTILE:
-                self.damage(object.damage)
+                self._damage(object.damage)
+    
+    def deploy_reflector(self):
+        reflector = reflectorModule.Reflector(image = 'metal_wall', pos = (self.x, self.y + 60*self.direction), timespan = self.ability_duration, team=self.team)
+        self.add_child( reflector )
 
 class SpaceshipClone():
 
@@ -132,11 +156,11 @@ class SpaceshipClone():
         self.bounds = bounds
         self.source = source
         self.team = team
-        self.ability = ability
+        self._ability = ability
         self.ability_duration = ability_duration if ability_duration > 0 else 5
         self.weapon = weapon.assemble(self) if weapon else weaponModule.Weapon(firerate=3, barrels=1, damage=5, mount=self)
         self.control = control
-        self.actions = 1
+        self._actions = 1
         self.cooldown = 8
         self.cooldown_timer = 0
         self.ability_timer = 0

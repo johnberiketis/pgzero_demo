@@ -1,6 +1,5 @@
 from classes.spaceship import Spaceship
 from classes.weapon import Weapon
-from classes.reflector import Reflector
 from agent import Agent
 from utils import Team
 import random
@@ -32,12 +31,15 @@ def machine_gun(spaceship: Spaceship):
 
 def reflection(spaceship: Spaceship):
     # A reflective shield
-    reflector = Reflector(image = 'metal_wall', pos = (spaceship.x, spaceship.y + 60*spaceship.direction), timespan = spaceship.ability_duration, team=spaceship.team)
-    spaceship.add_child( reflector )
+    spaceship.deploy_reflector()
 
 def buff_up(spaceship: Spaceship):
     # Increase weapon damage
     spaceship.weapon.damage = spaceship.weapon.damage + 2/spaceship.weapon.barrels
+
+def hawkeye(spaceship: Spaceship):
+    # Increase weapon speed
+    spaceship.weapon.speed = 15
 
 abilities = [
     super_speed,
@@ -45,7 +47,8 @@ abilities = [
     too_many_guns,
     machine_gun,
     reflection,
-    buff_up
+    buff_up,
+    hawkeye
     ]
 
 ######################################
@@ -82,18 +85,18 @@ weapons = [
 # malware = Spaceship(image = 'spaceship_black', health = 50, speed = 4, ability=reflection, ability_duration = 8, weapon = dual_plasma)
 
 enemy_image = 'spaceship_black'
-# enemy_ability = random.choice(abilities)
-enemy_ability = reflection
+enemy_ability = random.choice(abilities)
+# enemy_ability = reflection
 enemy_weapon = random.choice(weapons)
 # enemy_weapon = super_auto
 enemy_speed = 4
 enemy = Spaceship(image = enemy_image, health = 80, speed = enemy_speed, ability=enemy_ability, ability_duration = 6, weapon = enemy_weapon, team=Team.ENEMY, direction=1)
 
 player_image = random.choice(IMAGES_SPACESHIPS)
-# player_ability = random.choice(abilities)
-player_ability = too_many_guns
-# player_weapon = random.choice(weapons)
-player_weapon = gatling_gun
+player_ability = random.choice(abilities)
+# player_ability = hawkeye
+player_weapon = random.choice(weapons)
+# player_weapon = gatling_gun
 player_speed = random.choice([5,6,7])
 player = Spaceship(image = player_image, health = 80, speed = player_speed, ability=player_ability, ability_duration = 6, weapon = player_weapon)
 
