@@ -13,7 +13,7 @@ class Object(Actor):
         self.timespan = timespan
         self.bounds = bounds
         self.alive = alive
-        self.collidable = collidable
+        self._collidable = collidable
         self.spin = spin
         self.team = team
         self.source = source
@@ -27,6 +27,14 @@ class Object(Actor):
         
         if self.timespan > 0:
             clock.schedule_unique(self.kill, self.timespan)
+
+    @property
+    def collidable(self):
+        return self._collidable
+
+    @collidable.setter
+    def collidable(self, value: bool):
+        self._collidable = value
 
     def update(self):
         pass
@@ -80,6 +88,7 @@ class World():
 
     def __init__(self):
         self.objects = []
+        self.end_game = 0 
 
     def add_object(self, object):
         self.objects.append(object)

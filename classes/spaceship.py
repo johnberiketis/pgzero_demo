@@ -60,6 +60,18 @@ class Spaceship(Object):
         # Reset the character's action points
         self.actions = self.default.actions
 
+    @property
+    def collidable(self):
+        return self._collidable
+
+    @collidable.setter
+    def collidable(self, value: bool):
+        if value:
+            self.set_image(self.default.image)
+        else:
+            self.set_image('spaceship_transparent')
+        self._collidable = value
+
     def set_image(self, image):
         temp_angle = self.angle
         self.angle = 0 

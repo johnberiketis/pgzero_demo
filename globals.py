@@ -1,4 +1,5 @@
 from enum import IntEnum
+from pgzero.actor import Actor
 
 WIDTH = 1000
 HEIGHT = 800
@@ -21,6 +22,9 @@ class Type(IntEnum):
     ASTEROID = 1
     PROJECTILE = 2
     REFLECTOR = 3
+
+WIN_GRAPHIC = Actor('win', (WIDTH//2, HEIGHT//2))
+LOSE_GRAPHIC = Actor('lose', (WIDTH//2, HEIGHT//2))
 
 IMAGES_PROJECTILES = [
     'projectile',
