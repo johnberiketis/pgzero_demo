@@ -14,13 +14,12 @@ class Projectile(Object):
 
     def collide(self, object):
         super().collide(object)
-        if object.team != self.team:
-            if object.type == Type.REFLECTOR:
-                self.direction = -self.direction
-                self.team = object.team
-                self.angle += 180
-            else:
-                self.alive = False
+        if object.type == Type.REFLECTOR:
+            self.direction = -self.direction
+            self.team = object.team
+            self.angle += 180
+        else:
+            self.alive = False
     
     def copy(self):
         return Projectile( image=self.image, pos=self.pos, speed=self.speed, health=self.health, direction=self.direction, spin=self.spin, angle=self.angle)

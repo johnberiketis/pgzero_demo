@@ -86,17 +86,17 @@ weapons = [
 
 enemy_image = 'spaceship_black'
 enemy_ability = random.choice(abilities)
-# enemy_ability = reflection
+# enemy_ability = machine_gun
 enemy_weapon = random.choice(weapons)
-# enemy_weapon = super_auto
+# enemy_weapon = dual_plasma
 enemy_speed = 4
 enemy = Spaceship(image = enemy_image, health = 80, speed = enemy_speed, ability=enemy_ability, ability_duration = 6, weapon = enemy_weapon, team=Team.ENEMY, direction=1)
 
 player_image = random.choice(IMAGES_SPACESHIPS)
 player_ability = random.choice(abilities)
-# player_ability = hawkeye
+# player_ability = machine_gun
 player_weapon = random.choice(weapons)
-# player_weapon = gatling_gun
+# player_weapon = dual_plasma
 player_speed = random.choice([5,6,7])
 player = Spaceship(image = player_image, health = 80, speed = player_speed, ability=player_ability, ability_duration = 6, weapon = player_weapon)
 

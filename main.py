@@ -4,7 +4,7 @@ from laboratory import player, enemy, agent
 from classes.asteroid import generate_random_asteroid
 from gui import enemybar, healthbar, abilitybar, cooldownbar 
 from utils import CollisionInformation
-from globals import WIDTH, HEIGHT, ASTEROIDS_PER_SECOND, OBJECTS_LIMIT, WIN_GRAPHIC, LOSE_GRAPHIC
+from globals import WIDTH, HEIGHT, FPS, ASTEROIDS_PER_SECOND, OBJECTS_LIMIT, WIN_GRAPHIC, LOSE_GRAPHIC
 from utils import background, world
 
 def update_enviroment():
@@ -17,9 +17,8 @@ def update_objects():
     world.objects = world.objects[:OBJECTS_LIMIT]
     for obj in world.objects:
         
-        #TODO collitions should be handled by event (enter, exit) 
         if obj.collidable:
-            collided_objects = [o for o in world.objects if o != obj and o.collidable and obj.colliderect(o)] #Exclude self and objects with no collision
+            collided_objects = [o for o in world.objects if o.team != obj.team and o.collidable and obj.colliderect(o)] #Exclude same team objects (self is same team) and objects with no collision
             for collided_object in collided_objects:
                 obj.collide( CollisionInformation(collided_object) )
 
@@ -43,10 +42,10 @@ def update_gui():
 
     enemybar.update(enemy.health, enemy.max_health)
     healthbar.update(player.health, player.max_health)
-    if player.ability_timer > 0:
-        abilitybar.update(player.ability_timer, player.ability_duration*60)
-    if player.cooldown_timer > 0:
-        cooldownbar.update(player.cooldown_timer, player.cooldown*60)
+    if player._ability_timer_frames > 0:
+        abilitybar.update(player._ability_timer_frames, player.ability_duration*FPS)
+    if player._cooldown_timer_frames > 0:
+        cooldownbar.update(player._cooldown_timer_frames, player._cooldown_frames)
 
 def draw_enviroment():
 
@@ -62,7 +61,7 @@ def draw_gui():
     enemybar.draw()
     healthbar.draw()
     cooldownbar.draw()
-    if player.ability_timer > 0:
+    if player._ability_timer_frames > 0:
         abilitybar.draw()
     
 ##### GAME LOOP #####

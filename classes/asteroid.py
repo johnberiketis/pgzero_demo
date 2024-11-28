@@ -15,14 +15,13 @@ class Asteroid(Object):
 
     def collide(self, object):
         super().collide(object)
-        if object.team != self.team:
-            if object.type == Type.SPACESHIP:
-                self.alive = False
-            elif object.type == Type.REFLECTOR:
-                self.direction = -self.direction
-                self.team = object.team
-            elif object.type == Type.PROJECTILE:
-                self._damage( object.damage )
+        if object.type == Type.SPACESHIP:
+            self.alive = False
+        elif object.type == Type.REFLECTOR:
+            self.direction = -self.direction
+            self.team = object.team
+        elif object.type == Type.PROJECTILE:
+            self._damage( object.damage )
 
 def generate_random_asteroid():
     Asteroid( image = random.choice(IMAGES_ASTEROIDS), 
