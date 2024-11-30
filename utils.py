@@ -94,6 +94,7 @@ class World():
 
     def __init__(self):
         self.objects = []
+        self.effects = []
         self.end_game = 0 
 
     def add_object(self, object):
@@ -102,6 +103,13 @@ class World():
     def remove_object(self, object):
         self.objects.remove(object)
         del object
+
+    def add_effect(self, effect):
+        self.effects.append(effect)
+
+    def remove_effect(self, effect):
+        self.effects.remove(effect)
+        del effect
 
     def extend_objects(self, object_list):
         self.objects.extend(object_list)

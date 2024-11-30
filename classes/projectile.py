@@ -1,5 +1,6 @@
 from utils import Object
 from globals import WIDTH, HEIGHT, Type, Team
+from effects import explosion
 
 class Projectile(Object):
 
@@ -24,6 +25,7 @@ class Projectile(Object):
             self.angle += 180
         elif object.type != Type.POWERUP:
             self.alive = False
+            explosion(self.pos)
     
     def copy(self):
         return Projectile( image=self.image, pos=self.pos, speed=self.speed, health=self.health, direction=self.direction, spin=self.spin, angle=self.angle)

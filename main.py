@@ -1,5 +1,7 @@
 import pgzrun
+from pgzero.keyboard import keyboard
 import random
+import sys
 from laboratory import player, enemy, agent
 from classes.asteroid import generate_random_asteroid
 from classes.powerups import generate_random_powerup
@@ -7,7 +9,7 @@ from gui import enemybar, healthbar, abilitybar, cooldownbar
 from utils import CollisionInformation
 from globals import WIDTH, HEIGHT, FPS, ASTEROIDS_PER_SECOND, POWERUPS_PER_SECOND, OBJECTS_LIMIT, WIN_GRAPHIC, LOSE_GRAPHIC
 from utils import background, world
-
+ 
 def update_enviroment():
 
     if random.random() < (ASTEROIDS_PER_SECOND/FPS):
@@ -51,6 +53,11 @@ def update_gui():
     if player._cooldown_timer_frames > 0:
         cooldownbar.update(player._cooldown_timer_frames, player._cooldown_frames)
 
+def update_effects():
+
+    for e in world.effects:
+        e.update()
+
 def draw_enviroment():
 
     background.draw()
@@ -67,15 +74,24 @@ def draw_gui():
     cooldownbar.draw()
     if player._ability_timer_frames > 0:
         abilitybar.draw()
-    
+
+def draw_effects():
+
+    for e in world.effects:
+        e.draw()
+
 ##### GAME LOOP #####
 def update():
+
+    if keyboard.escape:
+        sys.exit(0)
 
     agent.think([player])
 
     update_enviroment()
     update_objects()
     update_gui()
+    update_effects()
 
 ##### DRAW LOOP #####
 def draw():
@@ -83,6 +99,7 @@ def draw():
     draw_enviroment()
     draw_objects()
     draw_gui()
+    draw_effects()
 
     if world.end_game == 1:
         WIN_GRAPHIC.draw()

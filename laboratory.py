@@ -83,6 +83,7 @@ weapons = [
 # turtle = Spaceship(image = 'spaceship_green', health = 80, speed = 6, ability=reflection, ability_duration = 20, weapon = automatic)
 # malware = Spaceship(image = 'spaceship_black', health = 50, speed = 4, ability=reflection, ability_duration = 8, weapon = dual_plasma)
 
+
 enemy_image = random.choice(IMAGES_SPACESHIPS)
 enemy_ability = random.choice(abilities)
 # enemy_ability = machine_gun
