@@ -6,6 +6,10 @@ class Projectile(Object):
     def __init__(self, image = 'projectile', pos = (0,0), speed = 8, health = 1, direction = -1, spin = 0, angle = 0, bounds = (WIDTH, HEIGHT), damage = 1, source = None, team = Team.NEUTRAL):
         super().__init__(image, pos, speed=speed, health=health, direction=direction, timespan=10, spin=spin, angle=angle, bounds=bounds, source=source, team=team)
         self.damage: int = damage
+        if direction == 1:
+            self.angle = 180
+        else:
+            self.angle = 0
 
     def update(self):
         self.y += self.speed*self.direction
@@ -18,7 +22,7 @@ class Projectile(Object):
             self.direction = -self.direction
             self.team = object.team
             self.angle += 180
-        else:
+        elif object.type != Type.POWERUP:
             self.alive = False
     
     def copy(self):

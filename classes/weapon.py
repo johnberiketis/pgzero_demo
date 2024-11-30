@@ -21,7 +21,7 @@ class Weapon():
     
     @firerate.setter
     def firerate(self, value):
-        self._firerate = clamp_value(value, 1, 14)
+        self._firerate = clamp_value(value, 1, 12)
 
     @property
     def barrels(self):
@@ -46,7 +46,7 @@ class Weapon():
     
     @speed.setter
     def speed(self, value):
-        self._speed = clamp_value(value, 0, 15)
+        self._speed = clamp_value(value, 0, 20)
 
     def assemble(self, mount):
         return Weapon(firerate=self._firerate, barrels=self._barrels, damage=self._damage, speed=self._speed, mount=mount)

@@ -15,6 +15,10 @@ class Spaceship(Object):
         else:
             pos = PLAYER_START_POS
         super().__init__(image, pos, health=health, speed=speed, bounds=bounds, source=source, team=team, direction=direction)
+        if direction == 1:
+            self.angle = 180
+        else:
+            self.angle = 0
         self.weapon = weapon
         self.control = control
 
@@ -87,7 +91,7 @@ class Spaceship(Object):
         if value:
             self._set_image(self._default["image"])
         else:
-            self._set_image('spaceship_transparent')
+            self._set_image('spaceships/transparent')
         self._collidable = value
     
     @property
@@ -168,10 +172,12 @@ class Spaceship(Object):
     def collide(self, object):
         super().collide(object)
         if object.type == Type.ASTEROID:
-            self._damage(ASTEROIDS_DAMAGE)
+            self._damage(object.damage)
         elif object.type == Type.PROJECTILE:
             self._damage(object.damage)
+        elif object.type == Type.POWERUP and self.team != Team.ENEMY:
+            object.effect(self)
     
     def deploy_reflector(self):
-        reflector = reflectorModule.Reflector(image = 'metal_wall', pos = (self.x, self.y + 60*self.direction), timespan = self.ability_duration, team=self.team)
+        reflector = reflectorModule.Reflector(image = 'others/metal_wall', pos = (self.x, self.y + 60*self.direction), timespan = self.ability_duration, team=self.team)
         self.add_child( reflector )

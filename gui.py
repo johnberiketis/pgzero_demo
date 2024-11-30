@@ -42,7 +42,7 @@ class Bar():
         if self.visible:
             game.screen.blit(self.surface, self.pos)
     
-enemybar        = Bar((5, 5),           (WIDTH - 10,10),    (64, 0, 0),     (50, 50, 50))
-healthbar       = Bar((5,HEIGHT - 20),  (180,10),           (128, 0, 0),    (50, 50, 50))
-abilitybar      = Bar((5,HEIGHT - 35),  (180,10),           (0, 200, 0),    (50, 50, 50))
-cooldownbar     = Bar((5,HEIGHT - 35),  (180,10),           (0, 150, 0),    (50, 50, 50), reversed = True)
+enemybar        = Bar((5, 5),           (WIDTH - 10,10),    (93, 152, 37),     (50, 50, 50))
+healthbar       = Bar((5,HEIGHT - 20),  (180,10),           (113, 172, 57), (50, 50, 50))
+abilitybar      = Bar((5,HEIGHT - 35),  (180,10),           (200, 178, 52), (50, 50, 50))
+cooldownbar     = Bar((5,HEIGHT - 35),  (180,10),           (99, 88, 26),   (50, 50, 50), reversed = True)

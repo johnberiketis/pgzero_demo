@@ -6,9 +6,10 @@ class Object(Actor):
         
     def __init__(self, image, pos, speed = 0, health = 1, direction = 0, timespan = -1, spin = 0, angle = 0, bounds = (WIDTH, HEIGHT), alive = True, damage = 0, collidable = True, source = None, team = Team.NEUTRAL):
         super().__init__(image, pos)
+        self.angle = angle
         self.speed = speed
-        self.health = health
         self.max_health = health
+        self.health = health
         self.direction = direction
         self.timespan = timespan
         self.bounds = bounds
@@ -21,13 +22,17 @@ class Object(Actor):
         self.parent = None
         self.childs = []
         world.add_object(self)
-        if direction == 1:
-            self.angle = 180
-        else:
-            self.angle = 0
         
         if self.timespan > 0:
             clock.schedule_unique(self.kill, self.timespan)
+
+    @property
+    def health(self):
+        return self._health
+    
+    @health.setter
+    def health(self, value):
+        self._health = clamp_value(value, -1, self.max_health)
 
     @property
     def collidable(self):
@@ -107,12 +112,12 @@ class CollisionInformation():
         self.type = Type[object.__class__.__name__.upper()]
         self.team = object.team if object.team else Team.NEUTRAL
         self.damage = object.damage if object.damage else 0
-
+        self.effect = object.effect if self.type == Type.POWERUP else None
 
 def clamp_value(value, smallest, largest): 
     return max(smallest, min(value, largest))
 
-background = Background('background2')
+background = Background('others/background')
 world = World()
 
 

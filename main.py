@@ -2,15 +2,19 @@ import pgzrun
 import random
 from laboratory import player, enemy, agent
 from classes.asteroid import generate_random_asteroid
+from classes.powerups import generate_random_powerup
 from gui import enemybar, healthbar, abilitybar, cooldownbar 
 from utils import CollisionInformation
-from globals import WIDTH, HEIGHT, FPS, ASTEROIDS_PER_SECOND, OBJECTS_LIMIT, WIN_GRAPHIC, LOSE_GRAPHIC
+from globals import WIDTH, HEIGHT, FPS, ASTEROIDS_PER_SECOND, POWERUPS_PER_SECOND, OBJECTS_LIMIT, WIN_GRAPHIC, LOSE_GRAPHIC
 from utils import background, world
 
 def update_enviroment():
 
-    if random.random() < (ASTEROIDS_PER_SECOND/60):
+    if random.random() < (ASTEROIDS_PER_SECOND/FPS):
         generate_random_asteroid()
+
+    if random.random() < (POWERUPS_PER_SECOND/FPS):
+        generate_random_powerup()
 
 def update_objects():
 
