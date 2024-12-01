@@ -1,10 +1,11 @@
 from pgzero.clock import clock
 from pgzero.actor import Actor
+import pygame
 from globals import WIDTH, HEIGHT, Team, Type
    
 class Object(Actor):
         
-    def __init__(self, image, pos, speed = 0, health = 1, direction = 0, timespan = -1, spin = 0, angle = 0, bounds = (WIDTH, HEIGHT), alive = True, damage = 0, collidable = True, source = None, team = Team.NEUTRAL):
+    def __init__(self, image, pos, speed = 0, health = 1, direction = 0, timespan = -1, spin = 0, angle = 0, alive = True, damage = 0, collidable = True, source = None, team = Team.NEUTRAL):
         super().__init__(image, pos)
         self.angle = angle
         self.speed = speed
@@ -12,7 +13,7 @@ class Object(Actor):
         self.health = health
         self.direction = direction
         self.timespan = timespan
-        self.bounds = bounds
+        self.bounds = (WIDTH, HEIGHT)
         self.alive = alive
         self._collidable = collidable
         self.damage = damage
@@ -124,6 +125,13 @@ class CollisionInformation():
 
 def clamp_value(value, smallest, largest): 
     return max(smallest, min(value, largest))
+
+def rect_intersection( rect1: pygame.Rect, rect2: pygame.Rect ):
+    left  = max( rect1.left,  rect2.left )
+    width = min( rect1.right, rect2.right ) - left
+    top   = max( rect1.top,   rect2.top )
+    height= min( rect1.bottom, rect2.bottom ) - top
+    return pygame.Rect( left, top, width, height )
 
 background = Background('others/background')
 world = World()

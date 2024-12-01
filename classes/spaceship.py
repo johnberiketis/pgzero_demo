@@ -9,12 +9,12 @@ from copy import deepcopy
 
 class Spaceship(Object):
 
-    def __init__(self, image, health = 10, speed = 5, ability = None, ability_duration = 6, cooldown = 8, weapon: weaponModule.Weapon = None, bounds = (WIDTH, HEIGHT), source = None, control = keyboard, team = Team.PLAYER, direction = -1):
+    def __init__(self, image, health = 10, speed = 5, ability = None, ability_duration = 6, cooldown = 8, weapon: weaponModule.Weapon = None, source = None, control = keyboard, team = Team.PLAYER, direction = -1):
         if team == Team.ENEMY:
             pos = ENEMY_START_POS
         else:
             pos = PLAYER_START_POS
-        super().__init__(image, pos, health=health, speed=speed, bounds=bounds, source=source, team=team, direction=direction)
+        super().__init__(image, pos, health=health, speed=speed, source=source, team=team, direction=direction)
         if direction == 1:
             self.angle = 180
         else:

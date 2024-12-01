@@ -4,8 +4,8 @@ from effects import explosion
 
 class Projectile(Object):
 
-    def __init__(self, image = 'projectile', pos = (0,0), speed = 8, health = 1, direction = -1, spin = 0, angle = 0, bounds = (WIDTH, HEIGHT), damage = 1, source = None, team = Team.NEUTRAL):
-        super().__init__(image, pos, speed=speed, health=health, direction=direction, timespan=10, spin=spin, angle=angle, bounds=bounds, source=source, team=team)
+    def __init__(self, image = 'projectile', pos = (0,0), speed = 8, health = 1, direction = -1, spin = 0, angle = 0, damage = 1, source = None, team = Team.NEUTRAL):
+        super().__init__(image, pos, speed=speed, health=health, direction=direction, timespan=10, spin=spin, angle=angle, source=source, team=team)
         self.damage: int = damage
         if direction == 1:
             self.angle = 180
@@ -25,7 +25,7 @@ class Projectile(Object):
             self.angle += 180
         elif object.type != Type.POWERUP:
             self.alive = False
-            explosion(self.pos)
+            explosion([sum(x) for x in zip(self.pos, (0, self.direction*20))])
     
     def copy(self):
         return Projectile( image=self.image, pos=self.pos, speed=self.speed, health=self.health, direction=self.direction, spin=self.spin, angle=self.angle)

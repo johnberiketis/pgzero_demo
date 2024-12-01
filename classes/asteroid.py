@@ -6,7 +6,7 @@ import random
 class Asteroid(Object):
 
     def __init__(self, image, pos, speed = ASTEROIDS_SPEED, health = 10, damage = 10, direction = 1, timespan = 30, spin = 0, angle = 0, drop_chance = 0, source = None, team = Team.ENEMY):
-        super().__init__(image, pos, speed=speed, health=health, damage = damage, direction=direction, timespan=timespan, spin=spin, angle=angle, bounds=(WIDTH, HEIGHT), source=source, team=team)
+        super().__init__(image, pos, speed=speed, health=health, damage = damage, direction=direction, timespan=timespan, spin=spin, angle=angle, source=source, team=team)
         self.drop_chance = drop_chance
         
     def update(self):
