@@ -1,5 +1,6 @@
 from classes.spaceship import Spaceship
 from classes.weapon import Weapon
+from classes.omni_proj import OmniProjectile
 from agent import Agent
 from utils import Team
 import random
@@ -40,6 +41,17 @@ def hypervelocity(spaceship: Spaceship):
     # Increase weapon speed
     spaceship.weapon.speed = 20
 
+def hypervelocity(spaceship: Spaceship):
+    # Increase weapon speed
+    spaceship.weapon.speed = 20
+
+def fanfire(spaceship: Spaceship):
+    # Send projectiles to every direction
+    n = 12
+    spread = 120
+    for i in range(0,n+1):
+        OmniProjectile(image = 'others/bomb', pos = spaceship.pos, speed=2, damage = 8, health = 8, source=spaceship, team=spaceship.team, direction= -spread/2 + (i*spread/n) ) #(spread/2)+(i*spread/n) )
+
 abilities = [
     super_speed,
     invisibility,
@@ -47,7 +59,8 @@ abilities = [
     machine_gun,
     reflection,
     buff_up,
-    hypervelocity
+    hypervelocity,
+    fanfire
     ]
 
 ######################################
@@ -61,6 +74,8 @@ automatic   = Weapon(firerate = 4, barrels = 1, damage = 4, speed = 12) # 28
 dual        = Weapon(firerate = 2, barrels = 2, damage = 3, speed = 9)  # 21
 dual_plasma = Weapon(firerate = 1, barrels = 2, damage = 5, speed = 8)  # 18
 gatling_gun = Weapon(firerate = 2, barrels = 3, damage = 2, speed = 9)  # 21
+
+test_cannon = Weapon(firerate = 8, barrels = 1, damage = 8, speed = 9)
 
 weapons = [
     cannon,
@@ -85,20 +100,20 @@ weapons = [
 
 
 enemy_image = random.choice(IMAGES_SPACESHIPS)
-enemy_ability = random.choice(abilities)
-# enemy_ability = reflection
-enemy_weapon = random.choice(weapons)
-# enemy_weapon = super_weapon
+# enemy_ability = random.choice(abilities)
+enemy_ability = fanfire
+# enemy_weapon = random.choice(weapons)
+enemy_weapon = cannon
 enemy_speed = 4
-enemy = Spaceship(image = enemy_image, health = 100, speed = enemy_speed, ability=enemy_ability, ability_duration = 10, weapon = enemy_weapon, team=Team.ENEMY, direction=1)
+enemy = Spaceship(image = enemy_image, health = 150, speed = enemy_speed, ability=enemy_ability, ability_duration = 0, cooldown=2, weapon = enemy_weapon, team=Team.ENEMY, direction=1)
 
 player_image = random.choice(IMAGES_SPACESHIPS)
 player_ability = random.choice(abilities)
-# player_ability = hypervelocity
+# player_ability = fanfire
 player_weapon = random.choice(weapons)
-# player_weapon = dual_plasma
+# player_weapon = test_cannon
 player_speed = random.choice([6,7,8])
-player = Spaceship(image = player_image, health = 80, speed = player_speed, ability=player_ability, ability_duration = 6, weapon = player_weapon)
+player = Spaceship(image = player_image, health = 100, speed = player_speed, ability=player_ability, ability_duration = 6, cooldown=6, weapon = player_weapon)
 
 agent = Agent("Enemy")
 agent.take_control(enemy)

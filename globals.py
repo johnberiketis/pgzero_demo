@@ -26,7 +26,7 @@ class Team(IntEnum):
 class Type(IntEnum):
     SPACESHIP = 0
     ASTEROID = 1
-    PROJECTILE = 2
+    PROJECTILE = OMNIPROJECTILE = 2
     REFLECTOR = 3
     POWERUP = 4
 

@@ -25,11 +25,11 @@ def update_objects():
         
         if obj.collidable:
             collided_objects = [o for o in world.objects if o.team != obj.team and o.collidable and obj.colliderect(o)] #Exclude same team objects (self is same team) and objects with no collision
-            for collided_object in collided_objects:
+            for collided_object in collided_objects:  
                 obj.collide( CollisionInformation(collided_object) )
 
     for obj in world.objects:
-        obj.update()
+        obj.update() 
 
     for obj in world.objects:
         if obj.alive == False:

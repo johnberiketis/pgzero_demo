@@ -27,5 +27,5 @@ class Projectile(Object):
             self.alive = False
             explosion([sum(x) for x in zip(self.pos, (0, self.direction*20))])
     
-    def copy(self):
-        return Projectile( image=self.image, pos=self.pos, speed=self.speed, health=self.health, direction=self.direction, spin=self.spin, angle=self.angle)
+    # def copy(self):
+    #     return Projectile( image=self.image, pos=self.pos, speed=self.speed, health=self.health, direction=self.direction, spin=self.spin, angle=self.angle)
