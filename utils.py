@@ -53,7 +53,7 @@ def rect_intersection( rect1: pygame.Rect, rect2: pygame.Rect ):
 
 class Object(Actor):
         
-    def __init__(self, image, pos, speed = 0, health = 1, direction = 0, timespan = -1, spin = 0, angle = 0, alive = True, damage = 0, collidable = True, source = None, team = Team.NEUTRAL):
+    def __init__(self, image, pos, speed = 0, health = 1, direction = 0, timespan = -1, spin = 0, angle = 0, alive = True, damage = 0, collidable = True, source = None, team = Team.NEUTRAL, dummy = False):
         super().__init__(image, pos)
         self.angle = angle
         self.speed = speed
@@ -70,7 +70,8 @@ class Object(Actor):
         self.source = source
         self.parent = None
         self.childs = []
-        world.add_object(self)
+        if not dummy:
+            world.add_object(self)
         
         if self.timespan > 0:
             clock.schedule_unique(self.kill, self.timespan)

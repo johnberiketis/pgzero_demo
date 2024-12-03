@@ -1,22 +1,23 @@
 from pgzero.clock import clock
 from pgzero.keyboard import keyboard
 from utils import Object, clamp_value
-from globals import WIDTH, HEIGHT, FPS, PLAYER_START_POS, ENEMY_START_POS, ASTEROIDS_DAMAGE, ABILITY_DURATION_LIMIT, MIN_COOLDOWN, MAX_COOLDOWN, Type, Team
+from globals import FPS, PLAYER_START_POS, ENEMY_START_POS, ABILITY_DURATION_LIMIT, MIN_COOLDOWN, MAX_COOLDOWN, Type, Team
 from . import weapon as weaponModule
 from . import reflector as reflectorModule
 from inspect import signature
 from copy import deepcopy
+from inspect import getdoc
 
 class Spaceship(Object):
 
-    def __init__(self, image, health = 10, speed = 5, ability = None, ability_duration = 6, cooldown = 8, weapon: weaponModule.Weapon = None, source = None, control = keyboard, team = Team.PLAYER):
+    def __init__(self, image = 'spaceships/spaceship_orange1', health = 50, speed = 5, ability = None, ability_duration = 6, cooldown = 8, weapon: weaponModule.Weapon = None, source = None, control = keyboard, team = Team.PLAYER, dummy = False):
         if team == Team.ENEMY:
             pos = ENEMY_START_POS
             angle = 180
         else:
             pos = PLAYER_START_POS
             angle = 0
-        super().__init__(image, pos, health=health, speed=speed, angle=angle, source=source, team=team)
+        super().__init__(image, pos, health=health, speed=speed, angle=angle, source=source, team=team, dummy = dummy)
 
         self.weapon = weapon
         self.control = control
@@ -32,6 +33,8 @@ class Spaceship(Object):
         # Timers to countdown the cooldown and ability duration
         self._cooldown_timer_frames = 0
         self._ability_timer_frames = 0
+
+        self._ability_message = getdoc(self._ability) if self._ability else "" 
 
         # The self._default represents the spaceship without any effects applied 
         # This dictionary is used to reset the state of the spaceship after an ability/effect ends
@@ -155,6 +158,7 @@ class Spaceship(Object):
         # then activate the characters ability 
         if self.control.lshift and self._actions == 1:
             self._ability(self)
+            print(self._ability_message)
             self._ability_timer_frames = self._ability_duration_frames
             self._actions = 0
             #After the duration reset the ability's effects
