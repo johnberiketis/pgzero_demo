@@ -9,16 +9,15 @@ from copy import deepcopy
 
 class Spaceship(Object):
 
-    def __init__(self, image, health = 10, speed = 5, ability = None, ability_duration = 6, cooldown = 8, weapon: weaponModule.Weapon = None, source = None, control = keyboard, team = Team.PLAYER, direction = -1):
+    def __init__(self, image, health = 10, speed = 5, ability = None, ability_duration = 6, cooldown = 8, weapon: weaponModule.Weapon = None, source = None, control = keyboard, team = Team.PLAYER):
         if team == Team.ENEMY:
             pos = ENEMY_START_POS
+            angle = 180
         else:
             pos = PLAYER_START_POS
-        super().__init__(image, pos, health=health, speed=speed, source=source, team=team, direction=direction)
-        if direction == 1:
-            self.angle = 180
-        else:
-            self.angle = 0
+            angle = 0
+        super().__init__(image, pos, health=health, speed=speed, angle=angle, source=source, team=team)
+
         self.weapon = weapon
         self.control = control
 
@@ -45,7 +44,6 @@ class Spaceship(Object):
                          "collidable":True,
                          "childs"   :deepcopy(self.childs),
                          "weapon"   :self.weapon.assemble(self),
-                         "direction":direction,
                          "actions"  :self._actions}
 
     @property
@@ -113,7 +111,6 @@ class Spaceship(Object):
         self.cooldown = self._default["cooldown"]
         self.collidable = self._default["collidable"]
         self.childs = self._default["childs"]
-        self.direction = self._default["direction"]
 
         self.weapon.firerate = self._default["weapon"].firerate
         self.weapon.barrels = self._default["weapon"].barrels
@@ -179,5 +176,5 @@ class Spaceship(Object):
             object.effect(self)
     
     def deploy_reflector(self):
-        reflector = reflectorModule.Reflector(image = 'others/metal_wall', pos = (self.x, self.y + 60*self.direction), timespan = self.ability_duration, team=self.team)
+        reflector = reflectorModule.Reflector(image = 'others/metal_wall', pos = (self.x, self.y - 60*self.team.value), timespan = self.ability_duration, team=self.team)
         self.add_child( reflector )

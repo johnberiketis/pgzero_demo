@@ -5,13 +5,12 @@ import random
 
 class Powerup(Object):
 
-    def __init__(self, image, pos, effect = None, speed = 3, direction = -1):
+    def __init__(self, image, pos, effect = None, speed = 3, direction = 180):
         super().__init__(image=image, pos=pos, speed=speed, direction=direction)
         self.effect = effect
 
     def update(self):
-        self.angle = self.angle + self.spin
-        self.y += self.speed*-self.direction
+        self.move_to(*self.next_pos())
         if self.y <= -50 or self.y >= self.bounds[1] + 50 or self.health <= 0:
             self.kill()
 

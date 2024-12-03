@@ -1,5 +1,4 @@
 from .projectile import Projectile
-from .omni_proj import OmniProjectile
 from pgzero.clock import clock
 from globals import IMAGES_PROJECTILES
 from utils import clamp_value
@@ -56,8 +55,8 @@ class Weapon():
         if self._gun_ready and self._mount:
             projectiles = []
             for i in range(self._barrels):
-                proj_start_pos = tuple([sum(x) for x in zip(self._mount.pos, (self._muzzles_pos[i][0], self._muzzles_pos[i][1]*-self._mount.direction))])
-                projectiles.append(OmniProjectile(self._get_image(), proj_start_pos, source = self._mount, damage = self.damage, speed = self.speed, team=self._mount.team ))
+                proj_start_pos = tuple([sum(x) for x in zip(self._mount.pos, (self._muzzles_pos[i][0], self._muzzles_pos[i][1]*+self._mount.team.value))])
+                projectiles.append( Projectile(self._get_image(), proj_start_pos, source = self._mount, damage = self.damage, speed = self.speed, team=self._mount.team ) )
             self._gun_ready = False
             clock.schedule_unique(self.reload, 1/self.firerate)
             return projectiles

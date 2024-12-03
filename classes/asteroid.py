@@ -5,13 +5,12 @@ import random
 
 class Asteroid(Object):
 
-    def __init__(self, image, pos, speed = ASTEROIDS_SPEED, health = 10, damage = 10, direction = 1, timespan = 30, spin = 0, angle = 0, drop_chance = 0, source = None, team = Team.ENEMY):
+    def __init__(self, image, pos, speed = ASTEROIDS_SPEED, health = 10, damage = 10, direction = 180, timespan = 30, spin = 0, angle = 0, drop_chance = 0, source = None, team = Team.ENEMY):
         super().__init__(image, pos, speed=speed, health=health, damage = damage, direction=direction, timespan=timespan, spin=spin, angle=angle, source=source, team=team)
         self.drop_chance = drop_chance
         
     def update(self):
-        self.angle = self.angle + self.spin
-        self.y += self.speed*self.direction
+        self.move_to(*self.next_pos())
         if self.y <= -50 or self.y >= self.bounds[1] + 50:
             self.kill()
         if self.health <= 0:
@@ -25,7 +24,7 @@ class Asteroid(Object):
         if object.type == Type.SPACESHIP:
             self.alive = False
         elif object.type == Type.REFLECTOR:
-            self.direction = -self.direction
+            self.bounce()
             self.team = object.team
         elif object.type == Type.PROJECTILE:
             self._damage( object.damage )

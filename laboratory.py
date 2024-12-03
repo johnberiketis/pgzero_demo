@@ -1,6 +1,6 @@
 from classes.spaceship import Spaceship
 from classes.weapon import Weapon
-from classes.omni_proj import OmniProjectile
+from classes.projectile import Projectile
 from agent import Agent
 from utils import Team
 import random
@@ -47,10 +47,10 @@ def hypervelocity(spaceship: Spaceship):
 
 def fanfire(spaceship: Spaceship):
     # Send projectiles to every direction
-    n = 12
-    spread = 120
+    n = 10
+    spread = 100
     for i in range(0,n+1):
-        OmniProjectile(image = 'others/bomb', pos = spaceship.pos, speed=2, damage = 8, health = 8, source=spaceship, team=spaceship.team, direction= -spread/2 + (i*spread/n) ) #(spread/2)+(i*spread/n) )
+        Projectile(image = 'others/bomb', pos = spaceship.pos, speed=2, damage = 12, health = 8, source=spaceship, team=spaceship.team, direction= -spread/2 + (i*spread/n) )
 
 abilities = [
     super_speed,
@@ -67,7 +67,7 @@ abilities = [
 ############ WEAPON LAB ##############
 ######################################
 
-# weapon.points = (damage * barrels * firerate) + speed
+# weapon points = (damage * barrels * firerate) + speed
 cannon      = Weapon(firerate = 2, barrels = 1, damage = 8, speed = 6)  # 22
 super_auto  = Weapon(firerate = 8, barrels = 1, damage = 1.5, speed = 13) # 25
 automatic   = Weapon(firerate = 4, barrels = 1, damage = 4, speed = 12) # 28
@@ -89,31 +89,22 @@ weapons = [
 ######################################
 ######### CHARACTERS LAB #############
 ######################################
-# TODO implement point system?
-# Spaceship cost = {cost_of(spaceship in normal mode) * cooldown_duration} + {cost_of(spaceship in ability mode) * ability_duration}
-# mcqueen = Spaceship(image = 'spaceship_red', health = 80, speed = 7, ability=super_speed, ability_duration = 6, weapon = super_auto)
-# casper = Spaceship(image = 'spaceship_yellow', health = 80, speed = 6, ability=invisibility, ability_duration = 8, weapon = cannon)
-# gunner = Spaceship(image = 'spaceship_black', health = 80, speed = 6, ability=too_many_guns, ability_duration = 6, weapon = dual)
-# rambo = Spaceship(image = 'spaceship_aqua_stripe', health = 80, speed = 6, ability=machine_gun, ability_duration = 6, weapon = automatic)
-# turtle = Spaceship(image = 'spaceship_green', health = 80, speed = 6, ability=reflection, ability_duration = 20, weapon = automatic)
-# malware = Spaceship(image = 'spaceship_black', health = 50, speed = 4, ability=reflection, ability_duration = 8, weapon = dual_plasma)
-
 
 enemy_image = random.choice(IMAGES_SPACESHIPS)
 # enemy_ability = random.choice(abilities)
 enemy_ability = fanfire
-# enemy_weapon = random.choice(weapons)
-enemy_weapon = cannon
+enemy_weapon = random.choice(weapons)
+# enemy_weapon = cannon
 enemy_speed = 4
-enemy = Spaceship(image = enemy_image, health = 150, speed = enemy_speed, ability=enemy_ability, ability_duration = 0, cooldown=2, weapon = enemy_weapon, team=Team.ENEMY, direction=1)
+enemy = Spaceship(image = enemy_image, health = 150, speed = enemy_speed, ability=enemy_ability, ability_duration = 0, cooldown=2, weapon = enemy_weapon, team=Team.ENEMY)
 
 player_image = random.choice(IMAGES_SPACESHIPS)
 player_ability = random.choice(abilities)
-# player_ability = fanfire
+# player_ability = reflection
 player_weapon = random.choice(weapons)
 # player_weapon = test_cannon
 player_speed = random.choice([6,7,8])
-player = Spaceship(image = player_image, health = 100, speed = player_speed, ability=player_ability, ability_duration = 6, cooldown=6, weapon = player_weapon)
+player = Spaceship(image = player_image, health = 100, speed = player_speed, ability=player_ability, ability_duration = 10, cooldown=6, weapon = player_weapon)
 
 agent = Agent("Enemy")
 agent.take_control(enemy)

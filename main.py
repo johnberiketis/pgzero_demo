@@ -33,14 +33,12 @@ def update_objects():
 
     for obj in world.objects:
         if obj.alive == False:
-            if obj == player:
+            if obj == player and world.end_game == 0:
                 #LOSS
                 world.end_game = -1
-                enemy.collidable = False
-            elif obj == enemy:
+            elif obj == enemy and world.end_game == 0:
                 #VICTORY
                 world.end_game = 1
-                player.collidable = False
             world.remove_object(obj)
             del obj
 
