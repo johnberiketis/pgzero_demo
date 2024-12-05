@@ -1,12 +1,14 @@
 from pgzero.clock import clock
 from pgzero.keyboard import keyboard
 from utils import Object, clamp_value
-from globals import FPS, PLAYER_START_POS, ENEMY_START_POS, ABILITY_DURATION_LIMIT, MIN_COOLDOWN, MAX_COOLDOWN, Type, Team
+from globals import FPS, PLAYER_START_POS, ENEMY_START_POS, ABILITY_DURATION_LIMIT, MIN_COOLDOWN, MAX_COOLDOWN, WIDTH, HEIGHT, Type, Team
 from . import weapon as weaponModule
 from . import reflector as reflectorModule
 from inspect import signature
 from copy import deepcopy
 from inspect import getdoc
+from pgzero.loaders import sounds
+from effects import Text
 
 class Spaceship(Object):
 
@@ -34,7 +36,11 @@ class Spaceship(Object):
         self._cooldown_timer_frames = 0
         self._ability_timer_frames = 0
 
-        self._ability_message = getdoc(self._ability) if self._ability else "" 
+        ability_message = getdoc(self._ability).replace("\n"," ")
+        max_msg_len = 30
+        if len(ability_message) > max_msg_len:
+            ability_message = ability_message[:max_msg_len] + "..."
+        self._ability_message = ability_message if self._ability else "" 
 
         # The self._default represents the spaceship without any effects applied 
         # This dictionary is used to reset the state of the spaceship after an ability/effect ends
@@ -158,14 +164,16 @@ class Spaceship(Object):
         # then activate the characters ability 
         if self.control.lshift and self._actions == 1:
             self._ability(self)
-            print(self._ability_message)
             self._ability_timer_frames = self._ability_duration_frames
             self._actions = 0
+            if self.team == Team.PLAYER:
+                Text(self._ability_message, (5,HEIGHT - 55), frames_duration=200, fontname='future_thin', fontsize=14, color=(255,255,255), fade = True)
             #After the duration reset the ability's effects
             clock.schedule_unique(self._reset, self.ability_duration)
         
         if self.control.space:
             self.weapon.shoot()
+            # sounds.sfx_laser1.play()
 
     def _damage(self, damage):
         super()._damage( damage )

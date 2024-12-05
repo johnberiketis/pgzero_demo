@@ -1,5 +1,6 @@
 from enum import IntEnum
 from pgzero.actor import Actor
+from pgzero import loaders
 
 # WIDTH = 1000
 # HEIGHT = 800
@@ -14,9 +15,11 @@ OBJECTS_LIMIT = 80
 ABILITY_DURATION_LIMIT = 20
 MIN_COOLDOWN = 1
 MAX_COOLDOWN = 30
+TUTORIAL = True
+TUTORIAL_MESSAGE = "Controls:\nLEFT and RIGHT arrows to move\nSPACE to shoot\nLEFT SHIFT to activate ability\nESC to quit"
 
-PLAYER_START_POS = (WIDTH//2, HEIGHT-50)
-ENEMY_START_POS = (WIDTH//2, 60)
+PLAYER_START_POS = (WIDTH//2-500, HEIGHT-50)
+ENEMY_START_POS = (WIDTH//2+500, 60)
 
 class Team(IntEnum):
     ENEMY = -1
@@ -101,4 +104,12 @@ IMAGES_ASTEROIDS = [
     'asteroids/asteroid_med2',
     'asteroids/asteroid_small1',
     'asteroids/asteroid_small2'
+]
+
+EXPLOSION_FRAMES = [
+        {"frame_number" : 0, "image" : loaders.images.load("effects/explosion1")},
+        {"frame_number" : 3, "image" : loaders.images.load("effects/explosion2.png")},
+        {"frame_number" : 5, "image" : loaders.images.load("effects/explosion3.png")},
+        {"frame_number" : 8, "image" : loaders.images.load("effects/explosion4.png")},
+        {"frame_number" : 10, "image" : loaders.images.load("effects/explosion5.png")}
 ]

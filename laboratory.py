@@ -97,11 +97,11 @@ enemy = Spaceship(image = enemy_image, health = 150, speed = enemy_speed, abilit
 
 player_image = random.choice(IMAGES_SPACESHIPS)
 player_ability = random.choice(abilities)
-# player_ability = reflection
+# player_ability = hypervelocity
 player_weapon = random.choice(weapons)
 # player_weapon = test_cannon
 player_speed = random.choice([6,7,8])
-player = Spaceship(image = player_image, health = 100, speed = player_speed, ability=player_ability, ability_duration = 10, cooldown = 6, weapon = player_weapon)
+player = Spaceship(image = player_image, health = 100, speed = player_speed, ability=player_ability, ability_duration = 8, cooldown = 4, weapon = player_weapon)
 
 agent = Agent("Enemy")
 agent.take_control(enemy)

@@ -7,9 +7,13 @@ from classes.asteroid import generate_random_asteroid
 from classes.powerups import generate_random_powerup
 from gui import enemybar, healthbar, abilitybar, cooldownbar 
 from utils import CollisionInformation
-from globals import WIDTH, HEIGHT, FPS, ASTEROIDS_PER_SECOND, POWERUPS_PER_SECOND, OBJECTS_LIMIT, WIN_GRAPHIC, LOSE_GRAPHIC
+from globals import WIDTH, HEIGHT, FPS, ASTEROIDS_PER_SECOND, POWERUPS_PER_SECOND, OBJECTS_LIMIT, WIN_GRAPHIC, LOSE_GRAPHIC, TUTORIAL, TUTORIAL_MESSAGE
 from utils import background, world
- 
+from effects import Text
+
+if TUTORIAL:
+    Text(TUTORIAL_MESSAGE, (WIDTH-300, HEIGHT-110), frames_duration=1200, typing=True, fontsize=14, fontname='future_thin')
+
 def update_enviroment():
 
     if random.random() < (ASTEROIDS_PER_SECOND/FPS):
@@ -40,7 +44,7 @@ def update_objects():
                 #VICTORY
                 world.end_game = 1
             world.remove_object(obj)
-            del obj
+            # del obj
 
 def update_gui():
 
