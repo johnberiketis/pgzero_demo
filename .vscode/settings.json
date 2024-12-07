@@ -8,6 +8,7 @@
     "editor.guides.indentation": false,
     "editor.glyphMargin": true,
     "editor.lineNumbers": "on",
+    "editor.rulers": [],
     "editor.showFoldingControls": "mouseover",
     "workbench.layoutControl.enabled": false,
     "window.title": " ",

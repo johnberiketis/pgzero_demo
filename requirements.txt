@@ -1,2 +1,4 @@
+# RUN: pip install -r *this file path*
+
 pgzero==1.2.1
 pygame==2.5.2

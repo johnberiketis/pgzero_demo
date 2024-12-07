@@ -111,5 +111,3 @@ def draw():
 
 def play():
     pgzrun.go()
-
-play()
