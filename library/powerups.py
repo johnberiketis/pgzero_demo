@@ -11,9 +11,10 @@ class Powerup(Object):
         self.effect = effect
 
     def update(self):
+        super().update()
         self.move_to(*self.next_pos())
-        if self.y <= -50 or self.y >= self.bounds[1] + 50 or self.health <= 0:
-            self.kill()
+        if self.y <= -50 or self.y >= self.bounds[1] + 50:
+            self.alive = False
 
     def collide(self, object):
         super().collide(object)
@@ -21,13 +22,16 @@ class Powerup(Object):
             self.alive = False
 
 def repair(spaceship: Spaceship):
+    '''+20 health'''
     spaceship.health += 20
 
 def weapon_plus(spaceship: Spaceship):
+    '''+1 weapon'''
     spaceship.weapon.barrels += 1
     spaceship._default["weapon"].barrels += 1
 
 def projectile_upgrade(spaceship: Spaceship):
+    '''+1 damage'''
     spaceship.weapon.damage += 1
     spaceship._default["weapon"].damage += 1
 

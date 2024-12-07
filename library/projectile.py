@@ -12,9 +12,10 @@ class Projectile(Object):
         self.damage: int = damage
 
     def update(self):
+        super().update()
         self.move_to(*self.next_pos())
-        if self.y <= -10 or self.y >= self.bounds[1] + 10 or self.health <= 0:
-            self.kill()
+        if self.y <= -10 or self.y >= self.bounds[1] + 10:
+            self.alive = False
 
     def collide(self, object):
         super().collide(object)

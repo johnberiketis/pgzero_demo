@@ -47,7 +47,7 @@ def clamp_value(value, smallest, largest):
 
 class Object(Actor):
         
-    def __init__(self, image, pos, speed = 0, health = 1, direction = 0, timespan = -1, spin = 0, angle = 0, alive = True, damage = 0, collidable = True, source = None, team = Team.NEUTRAL, dummy = False):
+    def __init__(self, image, pos, speed = 0, health = 1, direction = 0, timespan = -1, spin = 0, angle = 0, damage = 0, collidable = True, source = None, team = Team.NEUTRAL, dummy = False):
         super().__init__(image, pos)
         self.angle = angle
         self.speed = speed
@@ -56,7 +56,7 @@ class Object(Actor):
         self.direction = direction
         self.timespan = timespan
         self.bounds = (WIDTH, HEIGHT)
-        self.alive = alive
+        self.alive = True
         self._collidable = collidable
         self.damage = damage
         self.spin = spin
@@ -95,7 +95,8 @@ class Object(Actor):
         self._collidable = value
 
     def update(self):
-        pass
+        if self.health <= 0:
+            self.alive = False
     
     def next_pos(self):
         x = self.x + self.speed*math.cos(math.radians(self.direction))

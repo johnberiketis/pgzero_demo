@@ -38,11 +38,7 @@ class Spaceship(Object):
         self._cooldown_timer_frames = 0
         self._ability_timer_frames = 0
 
-        ability_message = getdoc(self._ability).replace("\n"," ")
-        max_msg_len = 30
-        if len(ability_message) > max_msg_len:
-            ability_message = ability_message[:max_msg_len] + "..."
-        self._ability_message = ability_message if self._ability else "" 
+        self.ability_message = getdoc(self._ability)
 
         # The self._default represents the spaceship without any effects applied 
         # This dictionary is used to reset the state of the spaceship after an ability/effect ends
@@ -56,6 +52,20 @@ class Spaceship(Object):
                          "childs"   :deepcopy(self.childs),
                          "weapon"   :self.weapon.assemble(self),
                          "actions"  :self._actions}
+    @property
+    def ability_message(self):
+        return self._ability_message
+    
+    @ability_message.setter
+    def ability_message(self, docstring: str):
+        if docstring:
+            ability_message = docstring.replace("\n"," ")
+        else:
+            ability_message = ""
+        max_msg_len = 30
+        if len(ability_message) > max_msg_len:
+            ability_message = ability_message[:max_msg_len] + "..."
+        self._ability_message = ability_message if self._ability else "" 
 
     @property
     def cooldown(self):
@@ -144,9 +154,7 @@ class Spaceship(Object):
 
     def update(self):
         super().update()
-
-        if self.health <= 0:
-            self.alive = False
+        if self.alive == False:
             return
         
         if self._cooldown_timer_frames > 0:
@@ -187,6 +195,10 @@ class Spaceship(Object):
         elif object.type == Type.PROJECTILE:
             self._damage(object.damage)
         elif object.type == Type.POWERUP and self.team != Team.ENEMY:
+            message = getdoc(object.effect)
+            if message:
+                message = message.replace("\n"," ")
+                Text(message[:30], (5,HEIGHT - 55), frames_duration=200, fontname='future_thin', fontsize=14, color=(255,255,255), fade = True)
             object.effect(self)
     
     def deploy_reflector(self):

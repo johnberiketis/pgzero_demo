@@ -14,7 +14,6 @@ from library.globals import IMAGES_SPACESHIPS
 ######### ABILITIES LAB ##############
 ######################################
 
-#TODO show docstrings when activated 
 def super_speed(spaceship : Spaceship):
     ''' Super speed!!! '''
     spaceship.speed = 13
@@ -90,17 +89,13 @@ weapons = [
 
 enemy_image = random.choice(IMAGES_SPACESHIPS)
 enemy_ability = random.choice(abilities)
-# enemy_ability = fanfire
 enemy_weapon = random.choice(weapons)
-# enemy_weapon = cannon
 enemy_speed = 4
 enemy = Spaceship(image = enemy_image, health = 150, speed = enemy_speed, ability=enemy_ability, ability_duration = 8, cooldown = 4, weapon = enemy_weapon, team=Team.ENEMY)
 
 player_image = random.choice(IMAGES_SPACESHIPS)
 player_ability = random.choice(abilities)
-# player_ability = hypervelocity
 player_weapon = random.choice(weapons)
-# player_weapon = test_cannon
 player_speed = random.choice([6,7,8])
 player = Spaceship(image = player_image, health = 100, speed = player_speed, ability=player_ability, ability_duration = 8, cooldown = 4, weapon = player_weapon)
 
