@@ -1,7 +1,5 @@
 import random
 import sys
-import os
-import inspect
 
 parent_module = sys.modules["__main__"]
 sys.modules["__main__"] = sys.modules[__name__]
