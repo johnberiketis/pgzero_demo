@@ -1,6 +1,9 @@
 import random
 import sys
+import os
+import inspect
 
+parent_module = sys.modules["__main__"]
 sys.modules["__main__"] = sys.modules[__name__]
 import pgzrun
 from pgzero.keyboard import keyboard
@@ -110,4 +113,7 @@ def draw():
         LOSE_GRAPHIC.draw()
 
 def play():
+
+    parent_module.hello()
+
     pgzrun.go()
