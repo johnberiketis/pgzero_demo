@@ -1,10 +1,11 @@
-from classes.spaceship import Spaceship
-from classes.weapon import Weapon
-from classes.projectile import Projectile
-from agent import Agent
-from utils import Team
 import random
-from globals import IMAGES_SPACESHIPS
+
+from library.spaceship import Spaceship
+from library.weapon import Weapon
+from library.projectile import Projectile
+from library.agent import Agent
+from library.utils import Team
+from library.globals import IMAGES_SPACESHIPS
 
 # This is the laboratory where you can create your own custom 
 # abilities, weapons and spaceships 
@@ -39,7 +40,7 @@ def buff_up(spaceship: Spaceship):
     spaceship.weapon.damage = spaceship.weapon.damage + 2/spaceship.weapon.barrels
 
 def hypervelocity(spaceship: Spaceship):
-    '''Super bullet speed!!!'''
+    '''Bullets super speed!!!'''
     spaceship.weapon.speed = 20
 
 def fanfire(spaceship: Spaceship):

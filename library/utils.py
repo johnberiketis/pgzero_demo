@@ -1,8 +1,9 @@
+import math
+
 from pgzero.clock import clock
 from pgzero.actor import Actor
-import pygame
-from globals import WIDTH, HEIGHT, Team, Type
-import math
+
+from library.globals import WIDTH, HEIGHT, Team, Type
 
 class Background(Actor):
 
@@ -43,13 +44,6 @@ class CollisionInformation():
 
 def clamp_value(value, smallest, largest): 
     return max(smallest, min(value, largest))
-
-def rect_intersection( rect1: pygame.Rect, rect2: pygame.Rect ):
-    left  = max( rect1.left,  rect2.left )
-    width = min( rect1.right, rect2.right ) - left
-    top   = max( rect1.top,   rect2.top )
-    height= min( rect1.bottom, rect2.bottom ) - top
-    return pygame.Rect( left, top, width, height )
 
 class Object(Actor):
         

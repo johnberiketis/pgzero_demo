@@ -1,18 +1,20 @@
-from pgzero.clock import clock
-from pgzero.keyboard import keyboard
-from utils import Object, clamp_value
-from globals import FPS, PLAYER_START_POS, ENEMY_START_POS, ABILITY_DURATION_LIMIT, MIN_COOLDOWN, MAX_COOLDOWN, WIDTH, HEIGHT, Type, Team
-from . import weapon as weaponModule
-from . import reflector as reflectorModule
 from inspect import signature
 from copy import deepcopy
 from inspect import getdoc
+
+from pgzero.clock import clock
+from pgzero.keyboard import keyboard
 from pgzero.loaders import sounds
-from effects import Text
+
+from library.utils import Object, clamp_value
+from library.globals import FPS, PLAYER_START_POS, ENEMY_START_POS, ABILITY_DURATION_LIMIT, MIN_COOLDOWN, MAX_COOLDOWN, WIDTH, HEIGHT, Type, Team
+from library.effects import Text
+from library.weapon import Weapon
+from library.reflector import Reflector
 
 class Spaceship(Object):
 
-    def __init__(self, image = 'spaceships/spaceship_orange1', health = 50, speed = 5, ability = None, ability_duration = 6, cooldown = 8, weapon: weaponModule.Weapon = None, source = None, control = keyboard, team = Team.PLAYER, dummy = False):
+    def __init__(self, image = 'spaceships/spaceship_orange1', health = 50, speed = 5, ability = None, ability_duration = 6, cooldown = 8, weapon: Weapon = None, source = None, control = keyboard, team = Team.PLAYER, dummy = False):
         if team == Team.ENEMY:
             pos = ENEMY_START_POS
             angle = 180
@@ -69,11 +71,11 @@ class Spaceship(Object):
         return self._weapon
     
     @weapon.setter
-    def weapon(self, weapon: weaponModule.Weapon):
-        if isinstance(weapon, weaponModule.Weapon):
-            self._weapon = weapon.assemble(self) if weapon else weaponModule.Weapon(firerate=3, barrels=1, damage=5, mount=self)
+    def weapon(self, weapon: Weapon):
+        if isinstance(weapon, Weapon):
+            self._weapon = weapon.assemble(self) if weapon else Weapon(firerate=3, barrels=1, damage=5, mount=self)
         else:
-            self._weapon = weaponModule.Weapon(firerate=3, barrels=1, damage=5, mount=self)
+            self._weapon = Weapon(firerate=3, barrels=1, damage=5, mount=self)
 
     @property
     def ability(self):
@@ -188,5 +190,5 @@ class Spaceship(Object):
             object.effect(self)
     
     def deploy_reflector(self):
-        reflector = reflectorModule.Reflector(image = 'others/metal_wall', pos = (self.x, self.y - 60*self.team.value), timespan = self.ability_duration, team=self.team)
+        reflector = Reflector(image = 'others/metal_wall', pos = (self.x, self.y - 60*self.team.value), timespan = self.ability_duration, team=self.team)
         self.add_child( reflector )

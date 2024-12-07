@@ -1,6 +1,7 @@
 from pygame import draw, Surface, Rect, Color
 from pgzero import game
-from globals import WIDTH, HEIGHT
+
+from library.globals import WIDTH, HEIGHT
 
 class Bar():
 

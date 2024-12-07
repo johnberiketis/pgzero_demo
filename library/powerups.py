@@ -1,7 +1,8 @@
-from utils import Object
-from globals import WIDTH, HEIGHT, IMAGES_POWERUPS, Type, Team
-from .spaceship import Spaceship 
 import random
+
+from library.utils import Object
+from library.globals import WIDTH, HEIGHT, IMAGES_POWERUPS, Type, Team
+from library.spaceship import Spaceship 
 
 class Powerup(Object):
 

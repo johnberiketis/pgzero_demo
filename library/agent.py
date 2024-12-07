@@ -1,5 +1,6 @@
 import random
-from globals import WIDTH, HEIGHT
+
+from library.globals import WIDTH, HEIGHT
 
 class Agent():
 

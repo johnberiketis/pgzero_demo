@@ -1,14 +1,10 @@
-import os
-from pygame import draw, Surface, Rect, Color, image
-from pgzero.actor import Actor
-from pgzero import game
-from pgzero.loaders import fonts
-from pgzero import ptext
-from pgzero import game
-from utils import world
-from globals import EXPLOSION_FRAMES, FPS
-from utils import clamp_value
 import math
+
+from pgzero.actor import Actor
+from pgzero import game, ptext, game
+
+from library.utils import world, clamp_value
+from library.globals import EXPLOSION_FRAMES, FPS
 
 class Effect(Actor):
 

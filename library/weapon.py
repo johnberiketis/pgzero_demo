@@ -1,8 +1,10 @@
-from .projectile import Projectile
-from pgzero.clock import clock
-from globals import IMAGES_PROJECTILES
-from utils import clamp_value
 import math
+
+from pgzero.clock import clock
+
+from library.projectile import Projectile
+from library.globals import IMAGES_PROJECTILES
+from library.utils import clamp_value
 
 class Weapon():
 

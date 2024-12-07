@@ -1,6 +1,7 @@
 from inspect import signature
-from classes.spaceship import Spaceship
-from classes.weapon import Weapon
+
+from library.spaceship import Spaceship
+from library.weapon import Weapon
 
 def calculate_ability_points(ability):
     if callable(ability):

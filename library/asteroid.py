@@ -1,7 +1,8 @@
-from utils import Object
-from .powerups import generate_random_powerup
-from globals import WIDTH, HEIGHT, ASTEROIDS_SPEED, IMAGES_ASTEROIDS, ASTEROIDS_DAMAGE, Type, Team
 import random
+
+from library.utils import Object
+from library.powerups import generate_random_powerup
+from library.globals import WIDTH, HEIGHT, ASTEROIDS_SPEED, IMAGES_ASTEROIDS, ASTEROIDS_DAMAGE, Type, Team
 
 class Asteroid(Object):
 

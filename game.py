@@ -1,15 +1,17 @@
-import pgzrun
-from pgzero.keyboard import keyboard
 import random
 import sys
-from laboratory import player, enemy, agent
-from classes.asteroid import generate_random_asteroid
-from classes.powerups import generate_random_powerup
-from gui import enemybar, healthbar, abilitybar, cooldownbar 
-from utils import CollisionInformation
-from globals import WIDTH, HEIGHT, FPS, ASTEROIDS_PER_SECOND, POWERUPS_PER_SECOND, OBJECTS_LIMIT, WIN_GRAPHIC, LOSE_GRAPHIC, TUTORIAL, TUTORIAL_MESSAGE
-from utils import background, world
-from effects import Text
+
+sys.modules["__main__"] = sys.modules[__name__]
+import pgzrun
+from pgzero.keyboard import keyboard
+
+from library.laboratory import player, enemy, agent
+from library.asteroid import generate_random_asteroid
+from library.powerups import generate_random_powerup
+from library.gui import enemybar, healthbar, abilitybar, cooldownbar 
+from library.utils import CollisionInformation, background, world
+from library.globals import WIDTH, HEIGHT, FPS, ASTEROIDS_PER_SECOND, POWERUPS_PER_SECOND, OBJECTS_LIMIT, WIN_GRAPHIC, LOSE_GRAPHIC, TUTORIAL, TUTORIAL_MESSAGE
+from library.effects import Text
 
 if TUTORIAL:
     Text(TUTORIAL_MESSAGE, (WIDTH-300, HEIGHT-110), frames_duration=1200, typing=True, fontsize=14, fontname='future_thin')
@@ -44,7 +46,6 @@ def update_objects():
                 #VICTORY
                 world.end_game = 1
             world.remove_object(obj)
-            # del obj
 
 def update_gui():
 
@@ -107,5 +108,8 @@ def draw():
         WIN_GRAPHIC.draw()
     elif world.end_game == -1:
         LOSE_GRAPHIC.draw()
-    
-pgzrun.go()
+
+def play():
+    pgzrun.go()
+
+play()

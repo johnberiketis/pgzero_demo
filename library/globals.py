@@ -1,4 +1,5 @@
 from enum import IntEnum
+
 from pgzero.actor import Actor
 from pgzero import loaders
 
