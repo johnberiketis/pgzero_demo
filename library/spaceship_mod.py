@@ -4,41 +4,28 @@ from inspect import getdoc
 
 from pgzero.clock import clock
 from pgzero.keyboard import keyboard
-from pgzero.loaders import sounds
 
 from library.utils import Object, clamp_value
-from library.globals import FPS, PLAYER_START_POS, ENEMY_START_POS, ABILITY_DURATION_LIMIT, MIN_COOLDOWN, MAX_COOLDOWN, WIDTH, HEIGHT, Type, Team
+from library.globals import FPS, PLAYER_START_POS, ABILITY_DURATION_LIMIT, MIN_COOLDOWN, MAX_COOLDOWN, WIDTH, HEIGHT, Type, Team
 from library.gui import Text
 from library.weapon import Weapon
 from library.reflector import Reflector
 
-class Spaceship(Object):
+class SpaceshipMod(Object):
 
-    def __init__(self, image = 'spaceships/spaceship_orange1', health = 50, speed = 5, ability = None, ability_duration = 6, cooldown = 8, weapon: Weapon = None, source = None, control = keyboard, team = Team.PLAYER, dummy = False):
-        if team == Team.ENEMY:
-            pos = ENEMY_START_POS
-            angle = 180
-        else:
-            pos = PLAYER_START_POS
-            angle = 0
-        super().__init__(image, pos, health=health, speed=speed, angle=angle, source=source, team=team, dummy = dummy)
+    def __init__(self, image = 'spaceships/spaceship_orange1', health = 50, speed = 5, ability = None, ability_duration = 6, cooldown = 8, weapon: Weapon = None):
+        super().__init__(image, pos=PLAYER_START_POS, health=health, speed=speed, team=Team.PLAYER)
 
         self.weapon = weapon
-        self.control = control
-
-        # Every action point can activate one ability
-        self._actions = 1
-
-        # After an ability there is a cooldown that will reset the action points
-        self.ability = ability
+        self.control = keyboard
+        self.ability = ability # After an ability there is a cooldown that will reset the action points
         self.ability_duration = ability_duration
+        self.ability_message = getdoc(self._ability)
         self.cooldown = cooldown
 
-        # Timers to countdown the cooldown and ability duration
-        self._cooldown_timer_frames = 0
-        self._ability_timer_frames = 0
-
-        self.ability_message = getdoc(self._ability)
+        self._actions = 1 # Every action point can activate one ability
+        self._cooldown_timer_frames = 0 # Timer to countdown the cooldown duration
+        self._ability_timer_frames = 0 # Timer to countdown the ability duration
 
         # The self._default represents the spaceship without any effects applied 
         # This dictionary is used to reset the state of the spaceship after an ability/effect ends
@@ -183,7 +170,6 @@ class Spaceship(Object):
         
         if self.control.space:
             self.weapon.shoot()
-            # sounds.sfx_laser1.play()
 
     def _damage(self, damage):
         super()._damage( damage )

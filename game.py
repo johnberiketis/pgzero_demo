@@ -9,10 +9,25 @@ from pgzero.keyboard import keyboard
 from library.laboratory import player, enemy, agent
 from library.asteroid import generate_random_asteroid
 from library.powerups import generate_random_powerup
-from library.gui import enemybar, healthbar, abilitybar, cooldownbar 
+from library.gui import Text, enemybar, healthbar, abilitybar, cooldownbar 
 from library.utils import CollisionInformation, background, world
 from library.globals import WIDTH, HEIGHT, FPS, ASTEROIDS_PER_SECOND, POWERUPS_PER_SECOND, OBJECTS_LIMIT, WIN_GRAPHIC, LOSE_GRAPHIC, TUTORIAL, TUTORIAL_MESSAGE
-from library.effects import Text
+
+enemybar.source = enemy
+enemybar.value_attr = "health"
+enemybar.max_value_attr = "max_health"
+
+healthbar.source = player
+healthbar.value_attr = "health"
+healthbar.max_value_attr = "max_health"
+
+abilitybar.source = player
+abilitybar.value_attr = "_ability_timer_frames"
+abilitybar.max_value_attr = "_ability_duration_frames"
+
+cooldownbar.source = player
+cooldownbar.value_attr = "_cooldown_timer_frames"
+cooldownbar.max_value_attr = "_cooldown_frames"
 
 if TUTORIAL:
     Text(TUTORIAL_MESSAGE, (WIDTH-300, HEIGHT-110), frames_duration=1200, typing=True, fontsize=14, fontname='future_thin')
@@ -50,12 +65,8 @@ def update_objects():
 
 def update_gui():
 
-    enemybar.update(enemy.health, enemy.max_health)
-    healthbar.update(player.health, player.max_health)
-    if player._ability_timer_frames > 0:
-        abilitybar.update(player._ability_timer_frames, player.ability_duration*FPS)
-    if player._cooldown_timer_frames > 0:
-        cooldownbar.update(player._cooldown_timer_frames, player._cooldown_frames)
+    for gui in world.guis:
+        gui.update()
 
 def update_effects():
 
@@ -73,11 +84,8 @@ def draw_objects():
 
 def draw_gui():
 
-    enemybar.draw()
-    healthbar.draw()
-    cooldownbar.draw()
-    if player._ability_timer_frames > 0:
-        abilitybar.draw()
+    for gui in world.guis:
+        gui.draw()
 
 def draw_effects():
 

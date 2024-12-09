@@ -15,6 +15,7 @@ class World():
     def __init__(self):
         self.objects = []
         self.effects = []
+        self.guis = []
         self.end_game = 0 
 
     def add_object(self, object):
@@ -30,6 +31,13 @@ class World():
     def remove_effect(self, effect):
         self.effects.remove(effect)
         del effect
+
+    def add_gui(self, gui):
+        self.guis.append(gui)
+
+    def remove_gui(self, gui):
+        self.guis.remove(gui)
+        del gui
 
     def extend_objects(self, object_list):
         self.objects.extend(object_list)

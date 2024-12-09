@@ -1,9 +1,8 @@
 import math
 
 from pgzero.actor import Actor
-from pgzero import game, ptext, game
 
-from library.utils import world, clamp_value
+from library.utils import world
 from library.globals import EXPLOSION_FRAMES, FPS
 
 class Effect(Actor):
@@ -59,68 +58,6 @@ class Effect(Actor):
                     self.next_frame = None
 
         self._frames_counter += 1
-
-class Text():
-
-    def __init__(self, text, pos, frames_duration = FPS, fontname='future', fontsize = 32, speed=0, direction=0, color = (255,255,255), alpha = 1.0, fade = False, typing= False):
-        self._frames_counter = 0
-        self._end_frame = frames_duration - 1
-        self.pos = pos
-        self.fontname = fontname
-        self.speed = speed
-        self.direction = direction
-        self.content = text
-        self._initial_content = text
-        self.fontsize = fontsize
-        self.color = color
-        self.alpha = alpha
-        self.fade = fade
-        self.typing = typing
-        self._fade_step = alpha/frames_duration
-        self._typing_letter_frames = 4
-        world.add_effect(self)
-
-    @property
-    def pos(self):
-        return (self.x, self.y)
-    
-    @pos.setter
-    def pos(self, pos: tuple):
-        self.x = pos[0]
-        self.y = pos[1]
-
-    @property
-    def direction(self):
-        return self._direction
-    
-    @direction.setter
-    def direction(self, value):
-        self._direction = value - 90
-    
-    def next_pos(self):
-        x = self.x + self.speed*math.cos(math.radians(self.direction))
-        y = self.y + self.speed*math.sin(math.radians(self.direction))
-        return (x, y)
-    
-    def move_to(self, x, y):
-        self.x = x
-        self.y = y
-
-    def update(self):
-        
-        self.move_to(*self.next_pos())
-        if self._frames_counter == self._end_frame:
-            world.remove_effect(self)
-        if self.fade:
-            self.alpha = self.alpha - self._fade_step
-        if self.typing:
-            text_length = self._frames_counter//self._typing_letter_frames
-            text_length = clamp_value(text_length, 0, len(self._initial_content))
-            self.content = self._initial_content[0:text_length]
-        self._frames_counter += 1
-
-    def draw(self):
-        ptext.draw( surf=game.screen, text=self.content, pos=self.pos, fontname=self.fontname, fontsize=self.fontsize, color=self.color, alpha = self.alpha)
 
 def explosion(pos):
     duration = 15
