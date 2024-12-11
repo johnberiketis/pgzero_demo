@@ -3,24 +3,46 @@ from enum import IntEnum
 from pgzero.actor import Actor
 from pgzero import loaders
 
-# WIDTH = 1000
-# HEIGHT = 800
+# Game constants
 WIDTH = 1920
 HEIGHT = 1080
 FPS = 60
+OBJECTS_LIMIT = 80
+TUTORIAL = True
+TUTORIAL_MESSAGE = "Controls:\nLEFT and RIGHT arrows to move\nSPACE to shoot\nLEFT SHIFT to activate ability\nESC to quit"
+MAX_ABILITY_MSG_LENGTH = 30
+WIN_GRAPHIC = Actor('others/win', (WIDTH//2, HEIGHT//2))
+LOSE_GRAPHIC = Actor('others/lose', (WIDTH//2, HEIGHT//2))
+
+# Enviroment constants
 ASTEROIDS_SPEED = 1
 ASTEROIDS_PER_SECOND = 0.4
 ASTEROIDS_DAMAGE = 10
 POWERUPS_PER_SECOND = 0.03
-OBJECTS_LIMIT = 80
-ABILITY_DURATION_LIMIT = 20
+
+# Spaceship constants:
 MIN_COOLDOWN = 1
 MAX_COOLDOWN = 30
-TUTORIAL = True
-TUTORIAL_MESSAGE = "Controls:\nLEFT and RIGHT arrows to move\nSPACE to shoot\nLEFT SHIFT to activate ability\nESC to quit"
-
+MIN_ABILITY_DURATION = 1
+MAX_ABILITY_DURATION = 20
 PLAYER_START_POS = (WIDTH//2-500, HEIGHT-50)
 ENEMY_START_POS = (WIDTH//2+500, 60)
+
+# Weapon constans:
+MIN_WEAPON_FIRERATE = 1
+MAX_WEAPON_FIRERATE = 12
+MIN_WEAPON_BARRELS = 1
+MAX_WEAPON_BARRELS = 4
+MIN_WEAPON_SPREAD_ANGLE = 0
+MAX_WEAPON_SPREAD_ANGLE = 120
+MIN_WEAPON_RANDOMNESS = 0
+MAX_WEAPON_RANDOMNESS = 30
+
+# Projectile constants
+MIN_PROJECTILE_DAMAGE = 1
+MAX_PROJECTILE_DAMAGE = 10
+MIN_PROJECTILE_SPEED = 1
+MAX_PROJECTILE_SPEED = 25
 
 class Team(IntEnum):
     ENEMY = -1
@@ -28,14 +50,11 @@ class Team(IntEnum):
     PLAYER = 1
 
 class Type(IntEnum):
-    SPACESHIP = 0
+    SPACESHIP = SPACESHIPMOD = 0
     ASTEROID = 1
     PROJECTILE = 2
     REFLECTOR = 3
     POWERUP = 4
-
-WIN_GRAPHIC = Actor('others/win', (WIDTH//2, HEIGHT//2))
-LOSE_GRAPHIC = Actor('others/lose', (WIDTH//2, HEIGHT//2))
 
 IMAGES_PROJECTILES = [
     'projectiles/projectilered',
@@ -109,8 +128,8 @@ IMAGES_ASTEROIDS = [
 
 EXPLOSION_FRAMES = [
         {"frame_number" : 0, "image" : loaders.images.load("effects/explosion1")},
-        {"frame_number" : 3, "image" : loaders.images.load("effects/explosion2.png")},
-        {"frame_number" : 5, "image" : loaders.images.load("effects/explosion3.png")},
-        {"frame_number" : 8, "image" : loaders.images.load("effects/explosion4.png")},
-        {"frame_number" : 10, "image" : loaders.images.load("effects/explosion5.png")}
+        {"frame_number" : 3, "image" : loaders.images.load("effects/explosion2")},
+        {"frame_number" : 5, "image" : loaders.images.load("effects/explosion3")},
+        {"frame_number" : 8, "image" : loaders.images.load("effects/explosion4")},
+        {"frame_number" : 10, "image" : loaders.images.load("effects/explosion5")}
 ]

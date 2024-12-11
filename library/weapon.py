@@ -4,29 +4,23 @@ import numpy
 from pgzero.clock import clock
 
 from library.projectile import Projectile
-from library.globals import IMAGES_PROJECTILES
+from library.globals import IMAGES_PROJECTILES, MIN_WEAPON_FIRERATE, MAX_WEAPON_FIRERATE, MIN_WEAPON_BARRELS, MAX_WEAPON_BARRELS
+from library.globals import MIN_WEAPON_SPREAD_ANGLE, MAX_WEAPON_SPREAD_ANGLE, MIN_WEAPON_RANDOMNESS, MAX_WEAPON_RANDOMNESS
 from library.utils import clamp_value
+from library.blueprints import WeaponBlueprint
 
 class Weapon():
 
-    def __init__(self, firerate = 3, barrels = 1, damage = 1, speed = 8, mount = None, spread_angle = 0, randomness = 0):
-        self.firerate = firerate
-        self.barrels = barrels
-        self.damage = damage
-        self.speed = speed
-        self.spread_angle = spread_angle
-        self.randomness = randomness
+    def __init__(self, blueprint: WeaponBlueprint):
+        self.firerate = blueprint.firerate
+        self.barrels = blueprint.barrels
+        self.damage = blueprint.damage
+        self.speed = blueprint.speed
+        self.spread_angle = blueprint.spread_angle
+        self.randomness = blueprint.randomness
         self._gun_ready = True
-        self._points = (damage * barrels * firerate) + speed
-        self._mount = mount
-
-    @property
-    def randomness(self):
-        return self._randomness
-
-    @randomness.setter
-    def randomness(self, value):
-        self._randomness = clamp_value(value, 0, 45) 
+        self._points = (blueprint.damage * blueprint.barrels * blueprint.firerate) + blueprint.speed
+        self._mount = None
 
     @property
     def firerate(self):
@@ -34,7 +28,7 @@ class Weapon():
     
     @firerate.setter
     def firerate(self, value):
-        self._firerate = clamp_value(value, 1, 12)
+        self._firerate = clamp_value(value, MIN_WEAPON_FIRERATE, MAX_WEAPON_FIRERATE)
 
     @property
     def barrels(self):
@@ -42,27 +36,24 @@ class Weapon():
     
     @barrels.setter
     def barrels(self, value):
-        self._barrels = clamp_value(value, 1, 4)
+        self._barrels = clamp_value(value, MIN_WEAPON_BARRELS, MAX_WEAPON_BARRELS)
         self._calc_muzzles_pos()
-        
-    @property
-    def damage(self):
-        return self._damage
-    
-    @damage.setter
-    def damage(self, value):
-        self._damage = clamp_value(value, 0, 10)
 
     @property
-    def speed(self):
-        return self._speed
-    
-    @speed.setter
-    def speed(self, value):
-        self._speed = clamp_value(value, 0, 25)
+    def spread_angle(self):
+        return self._spread_angle
 
-    def assemble(self, mount):
-        return Weapon(firerate=self._firerate, barrels=self._barrels, damage=self._damage, speed=self._speed, mount=mount, spread_angle=self.spread_angle, randomness=self.randomness)
+    @spread_angle.setter
+    def spread_angle(self, value):
+        self._spread_angle = clamp_value(value, MIN_WEAPON_SPREAD_ANGLE, MAX_WEAPON_SPREAD_ANGLE) 
+
+    @property
+    def randomness(self):
+        return self._randomness
+
+    @randomness.setter
+    def randomness(self, value):
+        self._randomness = clamp_value(value, MIN_WEAPON_RANDOMNESS, MAX_WEAPON_RANDOMNESS) 
 
     def shoot(self):
         if self._gun_ready and self._mount:

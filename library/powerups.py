@@ -28,12 +28,12 @@ def repair(spaceship: Spaceship):
 def weapon_plus(spaceship: Spaceship):
     '''+1 weapon'''
     spaceship.weapon.barrels += 1
-    spaceship._default["weapon"].barrels += 1
+    spaceship._blueprint.weapon.barrels += 1
 
 def projectile_upgrade(spaceship: Spaceship):
     '''+1 damage'''
     spaceship.weapon.damage += 1
-    spaceship._default["weapon"].damage += 1
+    spaceship._blueprint.weapon.damage += 1
 
 def generate_random_powerup(position = None):
     random_number = random.random()

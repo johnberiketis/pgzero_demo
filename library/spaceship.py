@@ -4,54 +4,64 @@ from inspect import getdoc
 
 from pgzero.clock import clock
 from pgzero.keyboard import keyboard
-from pgzero.loaders import sounds
 
 from library.utils import Object, clamp_value
-from library.globals import FPS, PLAYER_START_POS, ENEMY_START_POS, ABILITY_DURATION_LIMIT, MIN_COOLDOWN, MAX_COOLDOWN, WIDTH, HEIGHT, Type, Team
+from library.globals import FPS, PLAYER_START_POS, ENEMY_START_POS, MAX_ABILITY_MSG_LENGTH, MIN_ABILITY_DURATION, MAX_ABILITY_DURATION, MIN_COOLDOWN, MAX_COOLDOWN, WIDTH, HEIGHT, Type, Team
 from library.gui import Text
 from library.weapon import Weapon
 from library.reflector import Reflector
+from library.blueprints import SpaceshipBlueprint, WeaponBlueprint
 
 class Spaceship(Object):
 
-    def __init__(self, image = 'spaceships/spaceship_orange1', health = 50, speed = 5, ability = None, ability_duration = 6, cooldown = 8, weapon: Weapon = None, source = None, control = keyboard, team = Team.PLAYER, dummy = False):
-        if team == Team.ENEMY:
+    def __init__(self, blueprint: SpaceshipBlueprint):
+        if blueprint.team == Team.ENEMY:
             pos = ENEMY_START_POS
             angle = 180
         else:
             pos = PLAYER_START_POS
             angle = 0
-        super().__init__(image, pos, health=health, speed=speed, angle=angle, source=source, team=team, dummy = dummy)
+        super().__init__(blueprint.image, pos=pos, angle=angle, health=blueprint.health, speed=blueprint.speed, team=blueprint.team)
 
-        self.weapon = weapon
-        self.control = control
-
-        # Every action point can activate one ability
-        self._actions = 1
-
-        # After an ability there is a cooldown that will reset the action points
-        self.ability = ability
-        self.ability_duration = ability_duration
-        self.cooldown = cooldown
-
-        # Timers to countdown the cooldown and ability duration
-        self._cooldown_timer_frames = 0
-        self._ability_timer_frames = 0
-
+        self.weapon = blueprint.weapon
+        self.control = keyboard
+        self.ability = blueprint.ability_function # After an ability there is a cooldown that will reset the action points
+        self.ability_duration = blueprint.ability_duration
         self.ability_message = getdoc(self._ability)
+        self.cooldown = blueprint.cooldown_duration
+        self.move_function = blueprint.move_function
+        self.shoot_function = blueprint.shoot_function
 
-        # The self._default represents the spaceship without any effects applied 
-        # This dictionary is used to reset the state of the spaceship after an ability/effect ends
-        self._default = {"image"    :image,
-                         "max_health":self.max_health,
-                         "speed"    :speed,
-                         "ability"  :ability,
-                         "ability_duration":ability_duration,
-                         "cooldown" :cooldown,
-                         "collidable":True,
-                         "childs"   :deepcopy(self.childs),
-                         "weapon"   :self.weapon.assemble(self),
-                         "actions"  :self._actions}
+        self._actions = 1 # Every action point can activate one ability
+        self._cooldown_timer_frames = 0 # Timer to countdown the cooldown duration
+        self._ability_timer_frames = 0 # Timer to countdown the ability duration
+        self._blueprint = blueprint
+
+    def _fix_callable(self, method):
+        if not callable(method):
+            method = lambda a: a
+        else:
+            sig = signature(method)
+            if len(sig.parameters) != 1:
+                method = lambda a: a
+        return method
+
+    @property
+    def move_function(self):
+        return self._move_function
+
+    @move_function.setter
+    def move_function(self, method):
+        self._move_function = self._fix_callable(method)
+
+    @property
+    def shoot_function(self):
+        return self._shoot_function
+
+    @shoot_function.setter
+    def shoot_function(self, method):
+        self._shoot_function = self._fix_callable(method)
+
     @property
     def ability_message(self):
         return self._ability_message
@@ -62,9 +72,8 @@ class Spaceship(Object):
             ability_message = docstring.replace("\n"," ")
         else:
             ability_message = ""
-        max_msg_len = 30
-        if len(ability_message) > max_msg_len:
-            ability_message = ability_message[:max_msg_len] + "..."
+        if len(ability_message) > MAX_ABILITY_MSG_LENGTH:
+            ability_message = ability_message[:MAX_ABILITY_MSG_LENGTH] + "..."
         self._ability_message = ability_message if self._ability else "" 
 
     @property
@@ -81,11 +90,12 @@ class Spaceship(Object):
         return self._weapon
     
     @weapon.setter
-    def weapon(self, weapon: Weapon):
-        if isinstance(weapon, Weapon):
-            self._weapon = weapon.assemble(self) if weapon else Weapon(firerate=3, barrels=1, damage=5, mount=self)
+    def weapon(self, weapon_blueprint: WeaponBlueprint):
+        if weapon_blueprint and isinstance(weapon_blueprint, WeaponBlueprint):
+            self._weapon = Weapon(weapon_blueprint)
+            self._weapon._mount = self
         else:
-            self._weapon = Weapon(firerate=3, barrels=1, damage=5, mount=self)
+            self._weapon = None
 
     @property
     def ability(self):
@@ -93,13 +103,7 @@ class Spaceship(Object):
 
     @ability.setter
     def ability(self, method):
-        if not callable(method):
-            method = lambda a: a
-        else:
-            sig = signature(method)
-            if len(sig.parameters) != 1:
-                method = lambda a: a
-        self._ability = method
+        self._ability = self._fix_callable(method)
 
     @property
     def collidable(self):
@@ -108,7 +112,7 @@ class Spaceship(Object):
     @collidable.setter
     def collidable(self, value: bool):
         if value:
-            self._set_image(self._default["image"])
+            self._set_image(self._blueprint.image)
         else:
             self._set_image('spaceships/transparent')
         self._collidable = value
@@ -119,24 +123,19 @@ class Spaceship(Object):
 
     @ability_duration.setter
     def ability_duration(self, value):
-        value = clamp_value(value, 1, ABILITY_DURATION_LIMIT)
+        value = clamp_value(value, MIN_ABILITY_DURATION, MAX_ABILITY_DURATION)
         self._ability_duration_frames = value*FPS
 
     def _reset(self):
         # Reset the character to its original state
-        self.image = self._default["image"]
-        self.max_health = self._default["max_health"]
-        self.speed = self._default["speed"]
-        self.ability = self._default["ability"]
-        self.ability_duration = self._default["ability_duration"]
-        self.cooldown = self._default["cooldown"]
-        self.collidable = self._default["collidable"]
-        self.childs = self._default["childs"]
-
-        self.weapon.firerate = self._default["weapon"].firerate
-        self.weapon.barrels = self._default["weapon"].barrels
-        self.weapon.damage = self._default["weapon"].damage
-        self.weapon.speed = self._default["weapon"].speed
+        self.image = self._blueprint.image
+        self.max_health = self._blueprint.health
+        self.speed = self._blueprint.speed
+        self.ability = self._blueprint.ability_function
+        self.ability_duration = self._blueprint.ability_duration
+        self.cooldown = self._blueprint.cooldown_duration
+        self.collidable = True
+        self.weapon = self._blueprint.weapon
 
         #After the cooldown reset the action points
         self._cooldown_timer_frames = self._cooldown_frames
@@ -144,7 +143,7 @@ class Spaceship(Object):
 
     def _reset_actions(self):
         # Reset the character's action points
-        self._actions = self._default["actions"]
+        self._actions = 1
 
     def _set_image(self, image):
         temp_angle = self.angle
@@ -163,6 +162,10 @@ class Spaceship(Object):
         if self._ability_timer_frames > 0:
             self._ability_timer_frames -= 1 # pgzero runs at 60FPS by default
 
+        # Movement
+        # self.move_function(self) if self.move_function else None
+        # self.clamp()
+
         if self.control.left:
             self.move(-self.speed, 0)
             self.clamp()
@@ -170,10 +173,9 @@ class Spaceship(Object):
             self.move(+self.speed, 0)
             self.clamp()
 
-        # If left shift key is pressed and you have at least 1 action available
-        # then activate the characters ability 
+        # Ability
         if self.control.lshift and self._actions == 1:
-            self._ability(self)
+            self.ability(self)
             self._ability_timer_frames = self._ability_duration_frames
             self._actions = 0
             if self.team == Team.PLAYER:
@@ -183,7 +185,9 @@ class Spaceship(Object):
         
         if self.control.space:
             self.weapon.shoot()
-            # sounds.sfx_laser1.play()
+        # Shooting
+        # if self.weapon:
+        #     self.shoot_function(self) if self.shoot_function else None
 
     def _damage(self, damage):
         super()._damage( damage )

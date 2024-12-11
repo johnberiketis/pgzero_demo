@@ -1,10 +1,11 @@
 import random
 
 from library.spaceship import Spaceship
-from library.weapon import Weapon
+from library.blueprints import SpaceshipBlueprint
+from library.blueprints import WeaponBlueprint
 from library.projectile import Projectile
 from library.agent import Agent
-from library.utils import Team
+from library.utils import Team, world
 from library.globals import IMAGES_SPACESHIPS
 
 # This is the laboratory where you can create your own custom 
@@ -47,7 +48,7 @@ def fanfire(spaceship: Spaceship):
     n = 10
     spread = 100
     for i in range(0,n+1):
-        Projectile(image = 'others/bomb', pos = spaceship.pos, speed=2, damage = 12, health = 8, source=spaceship, team=spaceship.team, direction= -spread/2 + (i*spread/n) )
+        Projectile(image = 'others/bomb', pos = spaceship.pos, speed=2, damage = 12, health = 12, source=spaceship, team=spaceship.team, direction= -spread/2 + (i*spread/n) )
 
 abilities = [
     super_speed,
@@ -65,18 +66,18 @@ abilities = [
 ######################################
 
 # weapon points = (damage * barrels * firerate) + speed
-cannon      = Weapon(firerate = 2, barrels = 1, damage = 8, speed = 6)  # 22
-super_auto  = Weapon(firerate = 8, barrels = 1, damage = 1.5, speed = 13) # 25
-automatic   = Weapon(firerate = 4, barrels = 1, damage = 4, speed = 12) # 28
-dual        = Weapon(firerate = 2, barrels = 2, damage = 3, speed = 9)  # 21
-dual_plasma = Weapon(firerate = 1, barrels = 2, damage = 5, speed = 8)  # 18
+cannon      = WeaponBlueprint(firerate = 2, barrels = 1, damage = 8, speed = 6)  # 22
+super_auto  = WeaponBlueprint(firerate = 8, barrels = 1, damage = 1.5, speed = 13) # 25
+automatic   = WeaponBlueprint(firerate = 4, barrels = 1, damage = 4, speed = 12) # 28
+dual        = WeaponBlueprint(firerate = 2, barrels = 2, damage = 3, speed = 9)  # 21
+dual_plasma = WeaponBlueprint(firerate = 1, barrels = 2, damage = 5, speed = 8)  # 18
 
-gatling_gun = Weapon(firerate = 12, barrels = 1, damage = 1, speed = 18, randomness=3 )
-trident     = Weapon(firerate = 2, barrels = 3, damage = 2, speed = 9,  spread_angle=45)
-shotgun     = Weapon(firerate = 1, barrels = 4, damage = 4, speed = 25, spread_angle=5, randomness=2 )
+gatling_gun = WeaponBlueprint(firerate = 12, barrels = 1, damage = 1, speed = 18, randomness=3 )
+trident     = WeaponBlueprint(firerate = 2, barrels = 3, damage = 2, speed = 9,  spread_angle=45)
+shotgun     = WeaponBlueprint(firerate = 1, barrels = 4, damage = 4, speed = 25, spread_angle=5, randomness=2 )
 
 #Weapon for fun
-malfunction = Weapon(firerate = 12, barrels = 1, damage = 5, speed = 18, randomness=45 )
+malfunction = WeaponBlueprint(firerate = 12, barrels = 1, damage = 5, speed = 18, randomness=45 )
 
 weapons = [
     cannon,
@@ -94,19 +95,48 @@ weapons = [
 ######################################
 
 enemy_image = random.choice(IMAGES_SPACESHIPS)
-# enemy_ability = random.choice(abilities)
-enemy_ability = fanfire
+enemy_ability = random.choice(abilities)
+#enemy_ability = fanfire
 enemy_weapon = random.choice(weapons)
+# enemy_weapon = gatling_gun
 enemy_speed = 4
-enemy = Spaceship(image = enemy_image, health = 200, speed = enemy_speed, ability=enemy_ability, ability_duration = 6, cooldown = 8, weapon = enemy_weapon, team=Team.ENEMY)
+enemy_blueprint = SpaceshipBlueprint(image = enemy_image, 
+                                     health = 200, 
+                                     speed = enemy_speed, 
+                                     ability_function = enemy_ability, 
+                                     ability_duration = 6, 
+                                     cooldown_duration = 8, 
+                                     weapon = enemy_weapon, 
+                                     team=Team.ENEMY)
+
+enemy_image2 = random.choice(IMAGES_SPACESHIPS)
+enemy_ability2 = random.choice(abilities)
+# enemy_ability2 = fanfire
+enemy_weapon2 = random.choice(weapons)
+# enemy_weapon2 = gatling_gun
+enemy_speed2 = 4
+enemy_blueprint2 = SpaceshipBlueprint(image = enemy_image2, 
+                                     health = 200, 
+                                     speed = enemy_speed2, 
+                                     ability_function = enemy_ability2, 
+                                     ability_duration = 6, 
+                                     cooldown_duration = 8, 
+                                     weapon = enemy_weapon2, 
+                                     team=Team.ENEMY)
 
 player_image = random.choice(IMAGES_SPACESHIPS)
 player_ability = random.choice(abilities)
 # player_ability = reflection
-# player_weapon = random.choice(weapons)
-player_weapon = gatling_gun
+player_weapon = random.choice(weapons)
+#player_weapon = gatling_gun
 player_speed = random.choice([6,7,8])
-player = Spaceship(image = player_image, health = 100, speed = player_speed, ability=player_ability, ability_duration = 6, cooldown = 8, weapon = player_weapon)
+player_blueprint = SpaceshipBlueprint(image = player_image, 
+                                      health = 100, 
+                                      speed = player_speed, 
+                                      ability_function = player_ability, 
+                                      ability_duration = 6, 
+                                      cooldown_duration = 8, 
+                                      weapon = player_weapon,
+                                      team=Team.PLAYER)
 
 agent = Agent("Enemy")
-agent.take_control(enemy)

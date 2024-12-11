@@ -1,5 +1,5 @@
-from library.utils import Object
-from library.globals import WIDTH, HEIGHT, Type, Team
+from library.utils import Object, clamp_value
+from library.globals import WIDTH, HEIGHT, MIN_PROJECTILE_DAMAGE, MAX_PROJECTILE_DAMAGE, MIN_PROJECTILE_SPEED, MAX_PROJECTILE_SPEED,Type, Team
 from library.effects import explosion
 
 class Projectile(Object):
@@ -8,8 +8,25 @@ class Projectile(Object):
         if team == Team.ENEMY:
             direction += 180
         
-        super().__init__(image, pos, speed=speed, health=health, direction=direction, timespan=15, spin=spin, angle=-direction, source=source, team=team)
-        self.damage: int = damage
+        super().__init__(image, pos, health=health, direction=direction, timespan=15, spin=spin, angle=-direction, source=source, team=team)
+        self.damage: float = damage
+        self.speed: int = speed
+
+    @property
+    def damage(self):
+        return self._damage_value
+    
+    @damage.setter
+    def damage(self, value):
+        self._damage_value = clamp_value(value, MIN_PROJECTILE_DAMAGE, MAX_PROJECTILE_DAMAGE)
+
+    @property
+    def speed(self):
+        return self._speed
+    
+    @speed.setter
+    def speed(self, value):
+        self._speed = clamp_value(value, MIN_PROJECTILE_SPEED, MAX_PROJECTILE_SPEED)
 
     def update(self):
         super().update()

@@ -16,6 +16,8 @@ class World():
         self.objects = []
         self.effects = []
         self.guis = []
+        self.player = None
+        self.enemy = None
         self.end_game = 0 
 
     def add_object(self, object):

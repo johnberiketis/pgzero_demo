@@ -6,28 +6,22 @@ sys.modules["__main__"] = sys.modules[__name__]
 import pgzrun
 from pgzero.keyboard import keyboard
 
-from library.laboratory import player, enemy, agent
+from library.spaceship import Spaceship
+from library.laboratory import enemy_blueprint, player_blueprint, enemy_blueprint2
+from library.agent import Agent
 from library.asteroid import generate_random_asteroid
 from library.powerups import generate_random_powerup
 from library.gui import Text, enemybar, healthbar, abilitybar, cooldownbar 
 from library.utils import CollisionInformation, background, world
 from library.globals import WIDTH, HEIGHT, FPS, ASTEROIDS_PER_SECOND, POWERUPS_PER_SECOND, OBJECTS_LIMIT, WIN_GRAPHIC, LOSE_GRAPHIC, TUTORIAL, TUTORIAL_MESSAGE
 
-enemybar.source = enemy
-enemybar.value_attr = "health"
-enemybar.max_value_attr = "max_health"
+world.enemy = Spaceship(enemy_blueprint)
+agent= Agent("Enemy1")
+agent2= Agent("Enemy2")
 
-healthbar.source = player
-healthbar.value_attr = "health"
-healthbar.max_value_attr = "max_health"
-
-abilitybar.source = player
-abilitybar.value_attr = "_ability_timer_frames"
-abilitybar.max_value_attr = "_ability_duration_frames"
-
-cooldownbar.source = player
-cooldownbar.value_attr = "_cooldown_timer_frames"
-cooldownbar.max_value_attr = "_cooldown_frames"
+agent.take_control(world.enemy)
+agent2.take_control(Spaceship(enemy_blueprint2))
+world.player = Spaceship(player_blueprint)
 
 if TUTORIAL:
     Text(TUTORIAL_MESSAGE, (WIDTH-300, HEIGHT-110), frames_duration=1200, typing=True, fontsize=14, fontname='future_thin')
@@ -55,10 +49,10 @@ def update_objects():
 
     for obj in world.objects:
         if obj.alive == False:
-            if obj == player and world.end_game == 0:
+            if obj == world.player and world.end_game == 0:
                 #LOSS
                 world.end_game = -1
-            elif obj == enemy and world.end_game == 0:
+            elif obj == world.enemy and world.end_game == 0:
                 #VICTORY
                 world.end_game = 1
             world.remove_object(obj)
@@ -98,7 +92,8 @@ def update():
     if keyboard.escape:
         sys.exit(0)
 
-    agent.think([player])
+    agent.think([world.player])
+    agent2.think([world.player])
 
     update_enviroment()
     update_objects()
@@ -120,6 +115,32 @@ def draw():
 
 def play():
 
-    parent_module.hello()
+    # world.player = SpaceshipMod(
+    #     image               = parent_module.image if hasattr(parent_module, "image") else 'spaceships/spaceship_orange1',
+    #     health              = parent_module.health if hasattr(parent_module, "health") else 1,
+    #     speed               = parent_module.speed if hasattr(parent_module, "speed") else 0,
+    #     move_function       = parent_module.move if hasattr(parent_module, "move") else None,
+    #     shoot_function      = parent_module.shoot if hasattr(parent_module, "shoot") else None,
+    #     ability             = parent_module.ability if hasattr(parent_module, "ability") else None,
+    #     ability_duration    = parent_module.ability_duration if hasattr(parent_module, "ability_duration") else 1,  
+    #     cooldown            = parent_module.cooldown if hasattr(parent_module, "cooldown") else 10,
+    #     weapon              = parent_module.weapon if hasattr(parent_module, "weapon") else None,
+    # )
+
+    enemybar.source = world.enemy
+    enemybar.value_attr = "health"
+    enemybar.max_value_attr = "max_health"
+
+    healthbar.source = world.player
+    healthbar.value_attr = "health"
+    healthbar.max_value_attr = "max_health"
+
+    abilitybar.source = world.player
+    abilitybar.value_attr = "_ability_timer_frames"
+    abilitybar.max_value_attr = "_ability_duration_frames"
+
+    cooldownbar.source = world.player
+    cooldownbar.value_attr = "_cooldown_timer_frames"
+    cooldownbar.max_value_attr = "_cooldown_frames"
 
     pgzrun.go()
