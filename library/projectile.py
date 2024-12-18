@@ -29,13 +29,11 @@ class Projectile(Object):
         self._speed = clamp_value(value, MIN_PROJECTILE_SPEED, MAX_PROJECTILE_SPEED)
 
     def update(self):
-        super().update()
-        self.move_to(*self.next_pos())
-        if self.y <= -10 or self.y >= self.bounds[1] + 10:
+        self.move_to_next_pos()
+        if self.y <= -10 or self.y >= (HEIGHT + 10) or self.health <= 0:
             self.alive = False
 
     def collide(self, object):
-        super().collide(object)
         if object.type == Type.REFLECTOR:
             self.bounce(rotate = True)
             self.team = object.team

@@ -11,26 +11,30 @@ weapon can shoot sideways! Your imagination is the limit! (But also RAM and CPU)
 
 from game import play
 
-# speed = 5
-# health = 100
-# cooldown = 6
-# ability_duration = 8
+speed = 2
+health = 12
+cooldown = 5
+ability_duration = 5
+image = 'spaceships/spaceship_orange7'
 
-# def move(spaceship):
-#     if spaceship.keyboard.left:
-#         spaceship.x = spaceship.x - spaceship.speed
-#     elif spaceship.keyboard.right:
-#         spaceship.x = spaceship.x + spaceship.speed
+def update(spaceship):
+    if spaceship.control.left:
+        spaceship.x -= spaceship.speed
+        spaceship.clamp()
+    elif spaceship.control.right:
+        spaceship.x += spaceship.speed
+        spaceship.clamp()
 
-# def shoot(spaceship):
-#     if spaceship.keyboard.space:
-#         spaceship.weapon.shoot()
+    if spaceship.control.ability_key:
+        spaceship.activate_ability()
+    
+    if spaceship.control.shooting_key:
+        spaceship.weapon.shoot()
 
-# def ability(spaceship):
-#     '''Quad fire!!!'''
-#     spaceship.weapon.barrels = 4
+def ability(spaceship):
+    spaceship.speed = 5
 
-# from library.weapon import Weapon
-# weapon = Weapon(firerate=5, barrels=3, damage=4, speed=5, spread_angle=10, randomness=3)
+from library.blueprints import WeaponBlueprint
+weapon = WeaponBlueprint(firerate=2, barrels=1, damage=1, speed=6)
 
 play() 

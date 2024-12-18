@@ -13,6 +13,8 @@ TUTORIAL_MESSAGE = "Controls:\nLEFT and RIGHT arrows to move\nSPACE to shoot\nLE
 MAX_ABILITY_MSG_LENGTH = 30
 WIN_GRAPHIC = Actor('others/win', (WIDTH//2, HEIGHT//2))
 LOSE_GRAPHIC = Actor('others/lose', (WIDTH//2, HEIGHT//2))
+NUMBER_OF_PLAYERS = 1
+NUMBER_OF_ENEMIES = 1
 
 # Enviroment constants
 ASTEROIDS_SPEED = 1

@@ -4,9 +4,9 @@ from library.spaceship import Spaceship
 from library.blueprints import SpaceshipBlueprint
 from library.blueprints import WeaponBlueprint
 from library.projectile import Projectile
-from library.agent import Agent
+from library.pilot import Pilot, Player1, Player2
 from library.utils import Team, world
-from library.globals import IMAGES_SPACESHIPS
+from library.globals import IMAGES_SPACESHIPS, NUMBER_OF_PLAYERS, NUMBER_OF_ENEMIES
 
 # This is the laboratory where you can create your own custom 
 # abilities, weapons and spaceships 
@@ -78,6 +78,7 @@ shotgun     = WeaponBlueprint(firerate = 1, barrels = 4, damage = 4, speed = 25,
 
 #Weapon for fun
 malfunction = WeaponBlueprint(firerate = 12, barrels = 1, damage = 5, speed = 18, randomness=45 )
+default = WeaponBlueprint(firerate = 1, barrels = 1, damage = 1, speed = 6)
 
 weapons = [
     cannon,
@@ -94,49 +95,78 @@ weapons = [
 ######### CHARACTERS LAB #############
 ######################################
 
-enemy_image = random.choice(IMAGES_SPACESHIPS)
-enemy_ability = random.choice(abilities)
-#enemy_ability = fanfire
-enemy_weapon = random.choice(weapons)
-# enemy_weapon = gatling_gun
-enemy_speed = 4
-enemy_blueprint = SpaceshipBlueprint(image = enemy_image, 
-                                     health = 200, 
-                                     speed = enemy_speed, 
-                                     ability_function = enemy_ability, 
-                                     ability_duration = 6, 
-                                     cooldown_duration = 8, 
-                                     weapon = enemy_weapon, 
-                                     team=Team.ENEMY)
 
-enemy_image2 = random.choice(IMAGES_SPACESHIPS)
-enemy_ability2 = random.choice(abilities)
-# enemy_ability2 = fanfire
-enemy_weapon2 = random.choice(weapons)
-# enemy_weapon2 = gatling_gun
-enemy_speed2 = 4
-enemy_blueprint2 = SpaceshipBlueprint(image = enemy_image2, 
-                                     health = 200, 
-                                     speed = enemy_speed2, 
-                                     ability_function = enemy_ability2, 
-                                     ability_duration = 6, 
-                                     cooldown_duration = 8, 
-                                     weapon = enemy_weapon2, 
-                                     team=Team.ENEMY)
+############# ENEMIES ################
+enemy_blueprints = []
+enemies = []
+pilots = []  
+for e in range(0,NUMBER_OF_ENEMIES):
+    enemy_blueprints.append( SpaceshipBlueprint(image = random.choice(IMAGES_SPACESHIPS), 
+                                                health = 50, 
+                                                speed = 4, 
+                                                ability_function = random.choice(abilities),
+                                                ability_duration = 20, 
+                                                cooldown_duration = 1, 
+                                                weapon = random.choice(weapons), 
+                                                team=Team.ENEMY) )
 
-player_image = random.choice(IMAGES_SPACESHIPS)
-player_ability = random.choice(abilities)
-# player_ability = reflection
-player_weapon = random.choice(weapons)
-#player_weapon = gatling_gun
-player_speed = random.choice([6,7,8])
-player_blueprint = SpaceshipBlueprint(image = player_image, 
-                                      health = 100, 
-                                      speed = player_speed, 
-                                      ability_function = player_ability, 
-                                      ability_duration = 6, 
-                                      cooldown_duration = 8, 
-                                      weapon = player_weapon,
+  
+for spaceship_b in enemy_blueprints:
+    pilot = Pilot("Enemy")
+    enemy_spaceship = Spaceship( spaceship_b )
+    pilot.take_control( enemy_spaceship )
+    enemies.append( enemy_spaceship )
+    pilots.append( pilot )
+
+############# FRIENDS ################
+# friends_blueprints = []
+# friends = []
+# f_agents = []  
+# for f in range(0,2):
+#     friends_blueprints.append( SpaceshipBlueprint(image = random.choice(IMAGES_SPACESHIPS), 
+#                                                 health = 200, 
+#                                                 speed = 4, 
+#                                                 ability_function = random.choice(abilities), 
+#                                                 ability_duration = 6, 
+#                                                 cooldown_duration = 8, 
+#                                                 weapon = random.choice(weapons), 
+#                                                 team=Team.PLAYER) )
+
+  
+# for f_spaceship_b in friends_blueprints:
+#     f_agent = Pilot("Enemy")
+#     f_spaceship = Spaceship( f_spaceship_b )
+#     f_agent.take_control( f_spaceship )
+#     friends.append( f_spaceship )
+#     f_agents.append( f_agent )
+
+############# PLAYERS ################
+player1_blueprint = SpaceshipBlueprint(image = random.choice(IMAGES_SPACESHIPS), 
+                                      health = 500, 
+                                      speed = random.choice([7,8,9]), 
+                                      ability_function = random.choice(abilities), 
+                                      ability_duration = 10, 
+                                      cooldown_duration = 2, 
+                                    #   weapon = random.choice(weapons),
+                                      weapon = trident,
                                       team=Team.PLAYER)
 
-agent = Agent("Enemy")
+player1 = Player1("Player1")
+# world.player1 = Spaceship(player1_blueprint)
+# player1.take_control( world.player1 )
+
+player2 = None
+world.player2 = None
+if NUMBER_OF_PLAYERS == 2:
+    player2_blueprint = SpaceshipBlueprint(image = random.choice(IMAGES_SPACESHIPS), 
+                                        health = 500, 
+                                        speed = random.choice([7,8,9]), 
+                                        ability_function = random.choice(abilities), 
+                                        ability_duration = 10, 
+                                        cooldown_duration = 2, 
+                                        weapon = random.choice(weapons),
+                                        team=Team.PLAYER)
+
+    player2 = Player2("Player2")
+    world.player2 = Spaceship(player2_blueprint)
+    player2.take_control( world.player2 )

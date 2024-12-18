@@ -16,9 +16,9 @@ class World():
         self.objects = []
         self.effects = []
         self.guis = []
-        self.player = None
-        self.enemy = None
-        self.end_game = 0 
+        self.end_game = 0
+        self.player1 = None
+        self.player2 = None
 
     def add_object(self, object):
         self.objects.append(object)
@@ -87,6 +87,7 @@ class Object(Actor):
     @direction.setter
     def direction(self, value):
         self._direction = value - 90
+        self._radians = math.radians(self._direction)
 
     @property
     def health(self):
@@ -94,7 +95,7 @@ class Object(Actor):
     
     @health.setter
     def health(self, value):
-        self._health = clamp_value(value, -1, self.max_health)
+        self._health = clamp_value(value, 0, self.max_health)
 
     @property
     def collidable(self):
@@ -107,16 +108,23 @@ class Object(Actor):
     def update(self):
         if self.health <= 0:
             self.alive = False
+        if self.parent:
+            self.sync_pos()
+            if not self.parent.alive:
+                self.alive = False
     
     def next_pos(self):
-        x = self.x + self.speed*math.cos(math.radians(self.direction))
-        y = self.y + self.speed*math.sin(math.radians(self.direction))
+        x = self.x + self.speed*math.cos(self._radians)
+        y = self.y + self.speed*math.sin(self._radians)
         return (x, y)
+    
+    def move_to_next_pos(self):
+        self.x = self.x + self.speed*math.cos(self._radians)
+        self.y = self.y + self.speed*math.sin(self._radians)
 
     def move(self, dx, dy):
         self.x += dx
         self.y += dy
-        [child.sync_pos() for child in self.childs]
 
     def sync_pos(self):
         self.x = self.parent.x + self.dx

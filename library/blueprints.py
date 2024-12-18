@@ -24,8 +24,7 @@ class SpaceshipBlueprint():
     speed: int = 0
     ability_duration: float = 0
     cooldown_duration: float = 0
-    move_function: Callable = None
-    shoot_function: Callable = None
+    update_function: Callable = None
     ability_function: Callable = None
     weapon: Optional[WeaponBlueprint] = None
     team: Team = Team.NEUTRAL

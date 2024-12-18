@@ -3,7 +3,7 @@ import math
 from pygame import draw, Surface, Rect, Color
 from pgzero import game, ptext
 
-from library.globals import WIDTH, HEIGHT, FPS
+from library.globals import WIDTH, HEIGHT, FPS, Team
 from library.utils import world, clamp_value
 
 class Bar():
@@ -59,7 +59,8 @@ class Bar():
                 self.max_value = max_value
 
         if self.attached and self.source:
-            self.pos = ((self.source.pos[0] - self.size[0]//2), (self.source.pos[1] - self.size[1]//2))
+            y_offset = 50 if self.source.team == Team.PLAYER else -50
+            self.pos = ((self.source.pos[0] - self.size[0]//2), (self.source.pos[1] - self.size[1]//2) + y_offset)
          
         self.update_surface()
 
@@ -152,8 +153,7 @@ class Text():
 
     def draw(self):
         ptext.draw( surf=game.screen, text=self.content, pos=self.pos, fontname=self.fontname, fontsize=self.fontsize, color=self.color, alpha = self.alpha)
-    
-enemybar        = Bar((5, 5),           (WIDTH - 10,10),    (93, 152, 37),  (50, 50, 50))
-healthbar       = Bar((5,HEIGHT - 20),  (180,10),           (113, 172, 57), (50, 50, 50))
-cooldownbar     = Bar((5,HEIGHT - 35),  (180,10),           (99, 88, 26),   (50, 50, 50), reversed = True)
-abilitybar      = Bar((5,HEIGHT - 35),  (180,10),           (200, 178, 52), (50, 50, 50))
+
+# healthbar       = Bar((5,HEIGHT - 20),  (180,10),  (113, 172, 57), (50, 50, 50))
+# cooldownbar     = Bar((5,HEIGHT - 35),  (180,10),  (99, 88, 26),   (50, 50, 50), reversed = True)
+# abilitybar      = Bar((5,HEIGHT - 35),  (180,10),  (200, 178, 52), (50, 50, 50))

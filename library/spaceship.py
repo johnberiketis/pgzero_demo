@@ -1,15 +1,14 @@
 from inspect import signature
-from copy import deepcopy
 from inspect import getdoc
 
 from pgzero.clock import clock
-from pgzero.keyboard import keyboard
 
 from library.utils import Object, clamp_value
 from library.globals import FPS, PLAYER_START_POS, ENEMY_START_POS, MAX_ABILITY_MSG_LENGTH, MIN_ABILITY_DURATION, MAX_ABILITY_DURATION, MIN_COOLDOWN, MAX_COOLDOWN, WIDTH, HEIGHT, Type, Team
 from library.gui import Text
 from library.weapon import Weapon
 from library.reflector import Reflector
+from library.pilot import Player1, Player2
 from library.blueprints import SpaceshipBlueprint, WeaponBlueprint
 
 class Spaceship(Object):
@@ -24,13 +23,12 @@ class Spaceship(Object):
         super().__init__(blueprint.image, pos=pos, angle=angle, health=blueprint.health, speed=blueprint.speed, team=blueprint.team)
 
         self.weapon = blueprint.weapon
-        self.control = keyboard
-        self.ability = blueprint.ability_function # After an ability there is a cooldown that will reset the action points
+        self.control = Player1("Player1")
+        self._ability = self._fix_callable(blueprint.ability_function) # After an ability there is a cooldown that will reset the action points
         self.ability_duration = blueprint.ability_duration
         self.ability_message = getdoc(self._ability)
         self.cooldown = blueprint.cooldown_duration
-        self.move_function = blueprint.move_function
-        self.shoot_function = blueprint.shoot_function
+        self._update_function = blueprint.update_function if blueprint.update_function else lambda a:a
 
         self._actions = 1 # Every action point can activate one ability
         self._cooldown_timer_frames = 0 # Timer to countdown the cooldown duration
@@ -45,22 +43,6 @@ class Spaceship(Object):
             if len(sig.parameters) != 1:
                 method = lambda a: a
         return method
-
-    @property
-    def move_function(self):
-        return self._move_function
-
-    @move_function.setter
-    def move_function(self, method):
-        self._move_function = self._fix_callable(method)
-
-    @property
-    def shoot_function(self):
-        return self._shoot_function
-
-    @shoot_function.setter
-    def shoot_function(self, method):
-        self._shoot_function = self._fix_callable(method)
 
     @property
     def ability_message(self):
@@ -98,14 +80,6 @@ class Spaceship(Object):
             self._weapon = None
 
     @property
-    def ability(self):
-        return self._ability
-
-    @ability.setter
-    def ability(self, method):
-        self._ability = self._fix_callable(method)
-
-    @property
     def collidable(self):
         return self._collidable
 
@@ -131,7 +105,7 @@ class Spaceship(Object):
         self.image = self._blueprint.image
         self.max_health = self._blueprint.health
         self.speed = self._blueprint.speed
-        self.ability = self._blueprint.ability_function
+        self._ability = self._blueprint.ability_function
         self.ability_duration = self._blueprint.ability_duration
         self.cooldown = self._blueprint.cooldown_duration
         self.collidable = True
@@ -162,35 +136,36 @@ class Spaceship(Object):
         if self._ability_timer_frames > 0:
             self._ability_timer_frames -= 1 # pgzero runs at 60FPS by default
 
-        # Movement
-        # self.move_function(self) if self.move_function else None
-        # self.clamp()
-
-        if self.control.left:
-            self.move(-self.speed, 0)
-            self.clamp()
-        elif self.control.right:
-            self.move(+self.speed, 0)
-            self.clamp()
-
-        # Ability
-        if self.control.lshift and self._actions == 1:
-            self.ability(self)
-            self._ability_timer_frames = self._ability_duration_frames
-            self._actions = 0
-            if self.team == Team.PLAYER:
-                Text(self._ability_message, (5,HEIGHT - 55), frames_duration=200, fontname='future_thin', fontsize=14, color=(255,255,255), fade = True)
-            #After the duration reset the ability's effects
-            clock.schedule_unique(self._reset, self.ability_duration)
+        self._default_update() if self.team == Team.ENEMY else self._update_function(self)
         
-        if self.control.space:
-            self.weapon.shoot()
-        # Shooting
-        # if self.weapon:
-        #     self.shoot_function(self) if self.shoot_function else None
+        self.clamp()
 
     def _damage(self, damage):
         super()._damage( damage )
+
+    def _default_update(self):
+        if self.control.left:
+            self.x -= self.speed
+        elif self.control.right:
+            self.x += self.speed
+
+        if self.control.ability_key:
+            self.activate_ability()
+        
+        if self.control.shooting_key:
+            self.weapon.shoot()
+
+    def activate_ability(self):
+        if self._actions > 0:
+            self._ability(self)
+            self._ability_timer_frames = self._ability_duration_frames
+            self._actions = 0
+            if isinstance(self.control, Player1):
+                Text(self._ability_message, (5,HEIGHT - 55), frames_duration=200, fontname='future_thin', fontsize=14, color=(255,255,255), fade = True)
+            elif isinstance(self.control, Player2):
+                Text(self._ability_message, (WIDTH - 185, HEIGHT - 55), frames_duration=200, fontname='future_thin', fontsize=14, color=(255,255,255), fade = True)
+            #After the duration reset the ability's effects
+            clock.schedule_unique(self._reset, self.ability_duration)
 
     def collide(self, object):
         super().collide(object)

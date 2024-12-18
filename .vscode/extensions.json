@@ -9,10 +9,7 @@
 		"visualstudioexptteam.vscodeintellicode",
 		"ms-python.vscode-pylance",
 		"ms-python.python"
-		
 	],
 	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
-	"unwantedRecommendations": [
-		
-	]
+	"unwantedRecommendations": []
 }

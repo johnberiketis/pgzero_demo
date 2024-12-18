@@ -18,7 +18,7 @@ class Powerup(Object):
 
     def collide(self, object):
         super().collide(object)
-        if object.type != Type.PROJECTILE and object.team != Team.ENEMY:
+        if object.type != Type.PROJECTILE and object.type != Type.REFLECTOR and object.team != Team.ENEMY:
             self.alive = False
 
 def repair(spaceship: Spaceship):
