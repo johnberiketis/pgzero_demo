@@ -11,20 +11,32 @@ from library.reflector import Reflector
 from library.pilot import Player1, Player2
 from library.blueprints import SpaceshipBlueprint, WeaponBlueprint
 
+def default_update(spaceship):
+    if spaceship.control.left:
+        spaceship.x -= spaceship.speed
+    elif spaceship.control.right:
+        spaceship.x += spaceship.speed
+
+    if spaceship.control.ability_key:
+        spaceship.activate_ability()
+    
+    if spaceship.control.shooting_key:
+        spaceship.weapon.shoot()
+
 class Spaceship(Object):
 
-    def __init__(self, blueprint: SpaceshipBlueprint):
+    def __init__(self, blueprint: SpaceshipBlueprint, dummy = False):
         if blueprint.team == Team.ENEMY:
             pos = ENEMY_START_POS
             angle = 180
         else:
             pos = PLAYER_START_POS
             angle = 0
-        super().__init__(blueprint.image, pos=pos, angle=angle, health=blueprint.health, speed=blueprint.speed, team=blueprint.team)
+        super().__init__(blueprint.image, pos=pos, angle=angle, health=blueprint.health, speed=blueprint.speed, team=blueprint.team, dummy=dummy)
 
         self.weapon = blueprint.weapon
-        self.control = Player1("Player1")
-        self._ability = self._fix_callable(blueprint.ability_function) # After an ability there is a cooldown that will reset the action points
+        self._control = Player1("Player1")
+        self._ability = self._fix_callable(blueprint.ability_function)
         self.ability_duration = blueprint.ability_duration
         self.ability_message = getdoc(self._ability)
         self.cooldown = blueprint.cooldown_duration
@@ -43,6 +55,10 @@ class Spaceship(Object):
             if len(sig.parameters) != 1:
                 method = lambda a: a
         return method
+    
+    @property
+    def control(self):
+        return self._control
 
     @property
     def ability_message(self):
@@ -74,7 +90,7 @@ class Spaceship(Object):
     @weapon.setter
     def weapon(self, weapon_blueprint: WeaponBlueprint):
         if weapon_blueprint and isinstance(weapon_blueprint, WeaponBlueprint):
-            self._weapon = Weapon(weapon_blueprint)
+            self._weapon = Weapon(weapon_blueprint, dummy=self._dummy)
             self._weapon._mount = self
         else:
             self._weapon = None
@@ -136,24 +152,12 @@ class Spaceship(Object):
         if self._ability_timer_frames > 0:
             self._ability_timer_frames -= 1 # pgzero runs at 60FPS by default
 
-        self._default_update() if self.team == Team.ENEMY else self._update_function(self)
+        default_update(self) if self.team == Team.ENEMY else self._update_function(self)
         
         self.clamp()
 
     def _damage(self, damage):
         super()._damage( damage )
-
-    def _default_update(self):
-        if self.control.left:
-            self.x -= self.speed
-        elif self.control.right:
-            self.x += self.speed
-
-        if self.control.ability_key:
-            self.activate_ability()
-        
-        if self.control.shooting_key:
-            self.weapon.shoot()
 
     def activate_ability(self):
         if self._actions > 0:

@@ -17,7 +17,7 @@ class Pilot():
 
     def take_control(self, puppet):
         self.puppet = puppet
-        puppet.control = self
+        puppet._control = self
 
     def think(self, surroundings):
         if surroundings[0]:
@@ -60,7 +60,7 @@ class Player1():
 
     def take_control(self, puppet):
         self.puppet = puppet
-        puppet.control = self
+        puppet._control = self
 
     def read_keyboard(self):
         self.left = bool(keyboard.left)
@@ -81,7 +81,7 @@ class Player2():
 
     def take_control(self, puppet):
         self.puppet = puppet
-        puppet.control = self
+        puppet._control = self
 
     def read_keyboard(self):
         self.left = bool(keyboard.kp4)

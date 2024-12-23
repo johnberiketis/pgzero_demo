@@ -19,7 +19,7 @@ class Effect(Actor):
             self.next_frame = frames[1]
         else:
             self.next_frame = None
-        super().__init__("effects/explosion1",  pos) #TODO change the default value
+        super().__init__("effects/explosion1",  pos)
         world.add_effect(self)
 
     @property

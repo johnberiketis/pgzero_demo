@@ -5,18 +5,23 @@ parent_module = sys.modules["__main__"]
 sys.modules["__main__"] = sys.modules[__name__]
 import pgzrun
 from pgzero.keyboard import keyboard
+from pgzero.clock import clock
 
 from library.laboratory import enemies, pilots, player1, player2
 from library.blueprints import SpaceshipBlueprint
-from library.spaceship import Spaceship
+from library.spaceship import Spaceship, default_update
 from library.asteroid import generate_random_asteroid
 from library.powerups import generate_random_powerup
 from library.gui import Text, Bar
 from library.utils import CollisionInformation, background, world
-from library.globals import Team, WIDTH, HEIGHT, FPS, ASTEROIDS_PER_SECOND, POWERUPS_PER_SECOND, OBJECTS_LIMIT, WIN_GRAPHIC, LOSE_GRAPHIC, TUTORIAL, TUTORIAL_MESSAGE
+from library.inspector import run_inspection
+from library.globals import Team, WIDTH, HEIGHT, FPS, ASTEROIDS_PER_SECOND, POWERUPS_PER_SECOND, OBJECTS_LIMIT, WIN_GRAPHIC, LOSE_GRAPHIC, TUTORIAL, USE_INSPECTOR
 
 if TUTORIAL:
-    Text(TUTORIAL_MESSAGE, (WIDTH-300, HEIGHT-110), frames_duration=1200, typing=True, fontsize=14, fontname='future_thin')
+    from library.globals import TUTORIAL_MESSAGE, TUTORIAL_MESSAGE_P2
+    Text(TUTORIAL_MESSAGE, (10, HEIGHT-150), frames_duration=1200, typing=True, fontsize=14, fontname='future_thin')
+    if player2:
+        Text(TUTORIAL_MESSAGE_P2, (WIDTH-300, HEIGHT-160), frames_duration=1200, typing=True, fontsize=14, fontname='future_thin')
 
 def update_enviroment():
 
@@ -44,7 +49,7 @@ def update_objects():
             if (obj == world.player1 or obj == world.player2) and world.end_game == 0:
                 #LOSS
                 world.end_game = -1
-            if sum([e.health for e in enemies]) <= 0:
+            if sum([e.health for e in enemies]) <= 0 and world.end_game == 0:
                 world.end_game = 1
             world.remove_object(obj)
 
@@ -108,28 +113,14 @@ def draw():
     elif world.end_game == -1:
         LOSE_GRAPHIC.draw()
 
-def default_update(spaceship):
-    if spaceship.control.left:
-        spaceship.x -= spaceship.speed
-        spaceship.clamp()
-    elif spaceship.control.right:
-        spaceship.x += spaceship.speed
-        spaceship.clamp()
-
-    if spaceship.control.ability_key:
-        spaceship.activate_ability()
-    
-    if spaceship.control.shooting_key:
-        spaceship.weapon.shoot()
-
 def play():
 
     if hasattr(parent_module, "spaceship"):
-        world.player1 = Spaceship( parent_module.spaceship )
+        player1spaceship_blueprint = parent_module.spaceship
         if hasattr(parent_module, "update"):
-            world.player1._update_function = parent_module.update
+            player1spaceship_blueprint.update_function = parent_module.update
         else:
-            world.player1._update_function = default_update
+            player1spaceship_blueprint.update_function = default_update
     else:
         player1spaceship_blueprint = SpaceshipBlueprint(
             image               = parent_module.image if hasattr(parent_module, "image") else 'spaceships/spaceship_orange1',
@@ -142,21 +133,35 @@ def play():
             weapon              = parent_module.weapon if hasattr(parent_module, "weapon") else None,
             team                = Team.PLAYER
         )
-        world.player1 = Spaceship( player1spaceship_blueprint )
+
+    world.player1 = Spaceship( player1spaceship_blueprint )
 
     player1.take_control(world.player1)
 
+    #Enemy UI bars init
     for e in enemies:
-        Bar((5, 5), (180,10), (93, 152, 37), (50, 50, 50), source=e, attached = True, value_attr = "health", max_value_attr = "max_health")
+        Bar((0, -50), (180,10), (93, 152, 37), (50, 50, 50), source = e, attached = True, value_attr = "health", max_value_attr = "max_health")
+        Bar((0, -35), (180,10), (200, 178, 52), (50, 50, 50), source = e, attached = True, value_attr = "_ability_timer_frames", max_value_attr = "_ability_duration_frames")
 
+    #Player 1 UI bars init
     Bar((5,HEIGHT - 20),  (180,10),  (113, 172, 57), (50, 50, 50), source=world.player1, value_attr = "health", max_value_attr = "max_health")
     Bar((5,HEIGHT - 35),  (180,10),  (99, 88, 26),   (50, 50, 50), reversed = True, source=world.player1, value_attr = "_cooldown_timer_frames", max_value_attr = "_cooldown_frames")
     Bar((5,HEIGHT - 35),  (180,10),  (200, 178, 52), (50, 50, 50), source = world.player1, value_attr = "_ability_timer_frames", max_value_attr = "_ability_duration_frames")
 
+    #Player 2 UI bars init
     if player2:
         Bar((WIDTH-185, HEIGHT - 20),  (180,10),  (113, 172, 57), (50, 50, 50), source=world.player2, value_attr = "health", max_value_attr = "max_health")
         Bar((WIDTH-185, HEIGHT - 35),  (180,10),  (99, 88, 26),   (50, 50, 50), reversed = True, source=world.player2, value_attr = "_cooldown_timer_frames", max_value_attr = "_cooldown_frames")
         Bar((WIDTH-185, HEIGHT - 35),  (180,10),  (200, 178, 52), (50, 50, 50), source = world.player2, value_attr = "_ability_timer_frames", max_value_attr = "_ability_duration_frames")
 
-
+    #Run inspection
+    if USE_INSPECTOR:
+        inspection_message = run_inspection(player1spaceship_blueprint)
+        if len(inspection_message)>0:
+            print(inspection_message)
+            world.objects = []
+            world.guis = []
+            Text("WARNING:\n" + inspection_message, (50, HEIGHT//2 - 100), 1200, fontsize=30, color=(200, 50, 50))
+            clock.schedule_unique(sys.exit, 20)
+        
     pgzrun.go()

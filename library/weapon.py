@@ -11,7 +11,7 @@ from library.blueprints import WeaponBlueprint
 
 class Weapon():
 
-    def __init__(self, blueprint: WeaponBlueprint):
+    def __init__(self, blueprint: WeaponBlueprint, dummy = False):
         self.firerate = blueprint.firerate
         self.barrels = blueprint.barrels
         self.damage = blueprint.damage
@@ -21,6 +21,7 @@ class Weapon():
         self._gun_ready = True
         self._points = (blueprint.damage * blueprint.barrels * blueprint.firerate) + blueprint.speed
         self._mount = None
+        self._dummy = dummy
 
     @property
     def firerate(self):
@@ -65,8 +66,8 @@ class Weapon():
                     proj_direction = 0
                 if self.randomness:
                     proj_direction = proj_direction + numpy.random.normal(scale=self.randomness)
-                proj_start_pos = tuple([sum(x) for x in zip(self._mount.pos, (self._muzzles_pos[i][0], self._muzzles_pos[i][1]*+self._mount.team.value))])
-                projectiles.append( Projectile(self._get_image(), proj_start_pos, source = self._mount, damage = self.damage, speed = self.speed, team=self._mount.team, direction=proj_direction ) )
+                proj_start_pos = tuple([sum(x) for x in zip(self._mount.pos, (self._muzzles_pos[i][0], self._muzzles_pos[i][1]*self._mount.team.value))])
+                projectiles.append( Projectile(self._get_image(), proj_start_pos, source = self._mount, damage = self.damage, speed = self.speed, team=self._mount.team, direction=proj_direction, dummy=self._dummy ) )
             self._gun_ready = False
             clock.schedule_unique(self.reload, 1/self.firerate)
             return projectiles

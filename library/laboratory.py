@@ -1,6 +1,6 @@
 import random
 
-from library.spaceship import Spaceship
+from library.spaceship import Spaceship, default_update
 from library.blueprints import SpaceshipBlueprint
 from library.blueprints import WeaponBlueprint
 from library.projectile import Projectile
@@ -29,7 +29,7 @@ def too_many_guns(spaceship : Spaceship):
 
 def machine_gun(spaceship: Spaceship):
     '''Fire barraze!!!'''
-    spaceship.weapon.firerate = 12
+    spaceship.weapon.firerate = spaceship.weapon.firerate + 5
 
 def reflection(spaceship: Spaceship):
     '''Reflector deployed!!!'''
@@ -105,8 +105,8 @@ for e in range(0,NUMBER_OF_ENEMIES):
                                                 health = 50, 
                                                 speed = 4, 
                                                 ability_function = random.choice(abilities),
-                                                ability_duration = 20, 
-                                                cooldown_duration = 1, 
+                                                ability_duration = 6, 
+                                                cooldown_duration = 6, 
                                                 weapon = random.choice(weapons), 
                                                 team=Team.ENEMY) )
 
@@ -147,13 +147,10 @@ player1_blueprint = SpaceshipBlueprint(image = random.choice(IMAGES_SPACESHIPS),
                                       ability_function = random.choice(abilities), 
                                       ability_duration = 10, 
                                       cooldown_duration = 2, 
-                                    #   weapon = random.choice(weapons),
-                                      weapon = trident,
+                                      weapon = random.choice(weapons),
                                       team=Team.PLAYER)
 
 player1 = Player1("Player1")
-# world.player1 = Spaceship(player1_blueprint)
-# player1.take_control( world.player1 )
 
 player2 = None
 world.player2 = None
@@ -161,11 +158,12 @@ if NUMBER_OF_PLAYERS == 2:
     player2_blueprint = SpaceshipBlueprint(image = random.choice(IMAGES_SPACESHIPS), 
                                         health = 500, 
                                         speed = random.choice([7,8,9]), 
-                                        ability_function = random.choice(abilities), 
+                                        ability_function = random.choice(abilities),
                                         ability_duration = 10, 
-                                        cooldown_duration = 2, 
+                                        cooldown_duration = 2,
+                                        update_function = default_update, 
                                         weapon = random.choice(weapons),
-                                        team=Team.PLAYER)
+                                        team = Team.PLAYER)
 
     player2 = Player2("Player2")
     world.player2 = Spaceship(player2_blueprint)

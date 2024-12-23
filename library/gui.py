@@ -29,6 +29,9 @@ class Bar():
         self.value_attr: str = value_attr
         self.max_value_attr: str = max_value_attr
         self.attached = attached
+        if attached:
+            self.x_offset = pos[0]
+            self.y_offset = pos[1]
         self.reversed = reversed
         world.add_gui(self)
 
@@ -59,13 +62,12 @@ class Bar():
                 self.max_value = max_value
 
         if self.attached and self.source:
-            y_offset = 50 if self.source.team == Team.PLAYER else -50
-            self.pos = ((self.source.pos[0] - self.size[0]//2), (self.source.pos[1] - self.size[1]//2) + y_offset)
+            self.pos = ((self.source.pos[0] - self.size[0]//2 + self.x_offset), (self.source.pos[1] - self.size[1]//2 + self.y_offset))
          
         self.update_surface()
 
     def draw(self):
-        if self.visible:
+        if self.visible and self.source and self.source.alive:
             game.screen.blit(self.surface, self.pos)
 
     @property

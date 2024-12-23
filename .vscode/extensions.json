@@ -8,7 +8,8 @@
 		"mhutchie.git-graph",
 		"visualstudioexptteam.vscodeintellicode",
 		"ms-python.vscode-pylance",
-		"ms-python.python"
+		"ms-python.python",
+		"shd101wyy.markdown-preview-enhanced"
 	],
 	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
 	"unwantedRecommendations": []

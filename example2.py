@@ -5,15 +5,16 @@ from library.blueprints import WeaponBlueprint
 from library.globals import Team
 
 def ability(spaceship):
-    spaceship.speed = 5
+    '''Ability activated!'''
+    spaceship.weapon.firerate = 12
 
 weapon = WeaponBlueprint( firerate = 2, 
-                          barrels = 3, 
-                          damage = 1, 
-                          speed = 6 )
+                          barrels = 1, 
+                          damage = 3, 
+                          speed = 6)
 
-spaceship = SpaceshipBlueprint( image = 'spaceships/spaceship_orange6', 
-                                health = 50, 
+spaceship = SpaceshipBlueprint( image = 'spaceships/spaceship_red1', 
+                                health = 10, 
                                 speed = 7, 
                                 ability_function = ability, 
                                 ability_duration = 6, 

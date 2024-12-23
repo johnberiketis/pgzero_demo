@@ -74,6 +74,7 @@ class Object(Actor):
         self.source = source
         self.parent = None
         self.childs = []
+        self._dummy = dummy
         if not dummy:
             world.add_object(self)
         
