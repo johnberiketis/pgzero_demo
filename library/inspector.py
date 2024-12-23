@@ -1,4 +1,5 @@
 from inspect import signature
+import re
 
 from library.spaceship import Spaceship
 from library.blueprints import SpaceshipBlueprint, WeaponBlueprint
@@ -158,3 +159,5 @@ def run_inspection(spaceship_blueprint: SpaceshipBlueprint):
 
     return inspection_message
     
+def run_source_code_inspection(source_code):
+    return re.findall(r'\b_\w+', source_code)

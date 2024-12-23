@@ -1,7 +1,9 @@
 import random
 import sys
+import inspect
 
 parent_module = sys.modules["__main__"]
+parent_source = inspect.getsource(parent_module)
 sys.modules["__main__"] = sys.modules[__name__]
 import pgzrun
 from pgzero.keyboard import keyboard
@@ -14,7 +16,7 @@ from library.asteroid import generate_random_asteroid
 from library.powerups import generate_random_powerup
 from library.gui import Text, Bar
 from library.utils import CollisionInformation, background, world
-from library.inspector import run_inspection
+from library.inspector import run_inspection, run_source_code_inspection
 from library.globals import Team, WIDTH, HEIGHT, FPS, ASTEROIDS_PER_SECOND, POWERUPS_PER_SECOND, OBJECTS_LIMIT, WIN_GRAPHIC, LOSE_GRAPHIC, TUTORIAL, USE_INSPECTOR
 
 if TUTORIAL:
@@ -156,7 +158,12 @@ def play():
 
     #Run inspection
     if USE_INSPECTOR:
-        inspection_message = run_inspection(player1spaceship_blueprint)
+        illegal_code = run_source_code_inspection(str(parent_source))
+        inspection_message = ""
+        if len(illegal_code) > 0:
+            illegal_code = [f"\"{code}\"" for code in illegal_code]
+            inspection_message = "Illegal source code: " + str.join(', ', illegal_code)
+        inspection_message += run_inspection(player1spaceship_blueprint)
         if len(inspection_message)>0:
             print(inspection_message)
             world.objects = []
