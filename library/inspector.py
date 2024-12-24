@@ -4,7 +4,7 @@ import re
 from library.spaceship import Spaceship
 from library.blueprints import SpaceshipBlueprint, WeaponBlueprint
 from library.weapon import Weapon
-from library.globals import MAX_SPACESHIP_POINTS
+from library.globals import MAX_SPACESHIP_POINTS, MAX_HEALTH_WEIGHT, HEALTH_WEIGHT, SPEED_WEIGHT, ABILITY_DURATION_WEIGHT, COOLDOWN_WEIGHT, COLLIDABLE_WEIGHT, SPACESHIP_CHILDS_LENGTH_WEIGHT
 
 class DummyControl():
 
@@ -57,13 +57,13 @@ def calculate_weapon_points(weapon: Weapon):
 
 def calculate_spaceship_points(spaceship: Spaceship):
     if isinstance(spaceship, Spaceship):
-        return spaceship.max_health*                           0.25\
-             + spaceship.health*                               0.25\
-             + spaceship.speed*                                2.0\
-             + spaceship.ability_duration*                     2.0\
-             - spaceship.cooldown*                             2.0\
-             - int(spaceship.collidable)*                      10.0\
-             + len(spaceship.childs)*                          10.0       
+        return spaceship.max_health*       MAX_HEALTH_WEIGHT\
+             + spaceship.health*           HEALTH_WEIGHT\
+             + spaceship.speed*            SPEED_WEIGHT\
+             + spaceship.ability_duration* ABILITY_DURATION_WEIGHT\
+             - spaceship.cooldown*         COOLDOWN_WEIGHT\
+             - int(spaceship.collidable)*  COLLIDABLE_WEIGHT\
+             + len(spaceship.childs)*      SPACESHIP_CHILDS_LENGTH_WEIGHT       
         
     return 0
 

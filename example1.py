@@ -36,4 +36,6 @@ def ability(spaceship):
 from library.blueprints import WeaponBlueprint
 weapon = WeaponBlueprint(firerate=2, barrels=1, damage=2, speed=6)
 
+powerup = None
+
 play() 
