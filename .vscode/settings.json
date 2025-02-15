@@ -1,0 +1,17 @@
+{
+    "editor.minimap.enabled": false,
+    "workbench.statusBar.visible": false,
+    "breadcrumbs.enabled": false,
+    "workbench.tree.renderIndentGuides": "none",
+    "explorer.openEditors.visible": 1,
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.indentation": false,
+    "editor.glyphMargin": true,
+    "editor.lineNumbers": "on",
+    "editor.rulers": [],
+    "editor.showFoldingControls": "mouseover",
+    "workbench.layoutControl.enabled": false,
+    "window.title": " ",
+    "workbench.editor.showTabs": "multiple",
+    "workbench.activityBar.location": "top"
+}
