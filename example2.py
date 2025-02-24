@@ -20,6 +20,9 @@ spaceship = SpaceshipBlueprint( image = 'spaceships/spaceship_red1',
                                 ability_duration = 6, 
                                 cooldown_duration = 2,
                                 weapon = weapon,
+           
                                 team = Team.PLAYER )
+
+#
 
 game.play()
