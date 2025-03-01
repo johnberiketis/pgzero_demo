@@ -7,23 +7,21 @@ from library.projectile import Projectile
 from library.globals import IMAGES_PROJECTILES, MIN_WEAPON_FIRERATE, MAX_WEAPON_FIRERATE, MIN_WEAPON_BARRELS, MAX_WEAPON_BARRELS
 from library.globals import MIN_WEAPON_SPREAD_ANGLE, MAX_WEAPON_SPREAD_ANGLE, MIN_WEAPON_RANDOMNESS, MAX_WEAPON_RANDOMNESS
 from library.utils import clamp_value
-# from library.blueprints import WeaponBlueprint
+from library.blueprints import WeaponBlueprint
 
 class Weapon():
 
-    def __init__(self, firerate=1, barrels=1, damage=0, speed=0, spread_angle=0, randomness=0, dummy = False):
-        self.firerate = firerate
-        self.barrels = barrels
-        self.damage = damage
-        self.speed = speed
-        self.spread_angle = spread_angle
-        self.randomness = randomness
+    def __init__(self, blueprint: WeaponBlueprint, dummy = False):
+        self.firerate = blueprint.firerate
+        self.barrels = blueprint.barrels
+        self.damage = blueprint.damage
+        self.speed = blueprint.speed
+        self.spread_angle = blueprint.spread_angle
+        self.randomness = blueprint.randomness
         self._gun_ready = True
-        self._points = (self.damage * self.barrels * self.firerate) + self.speed
+        self._points = (blueprint.damage * blueprint.barrels * blueprint.firerate) + blueprint.speed
         self._mount = None
         self._dummy = dummy
-
-
 
     @property
     def firerate(self):

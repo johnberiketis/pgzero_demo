@@ -2,7 +2,7 @@ from inspect import signature
 import re
 
 from library.spaceship import Spaceship
-# from library.blueprints import SpaceshipBlueprint, WeaponBlueprint
+from library.blueprints import SpaceshipBlueprint, WeaponBlueprint
 from library.weapon import Weapon
 from library.globals import MAX_SPACESHIP_POINTS, MAX_HEALTH_WEIGHT, HEALTH_WEIGHT, SPEED_WEIGHT, ABILITY_DURATION_WEIGHT, COOLDOWN_WEIGHT, COLLIDABLE_WEIGHT, SPACESHIP_CHILDS_LENGTH_WEIGHT
 

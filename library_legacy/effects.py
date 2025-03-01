@@ -2,7 +2,7 @@ import math
 
 from pgzero.actor import Actor
 
-# from library.utils import world
+from library.utils import world
 from library.globals import EXPLOSION_FRAMES, FPS
 
 class Effect(Actor):
@@ -20,7 +20,7 @@ class Effect(Actor):
         else:
             self.next_frame = None
         super().__init__("effects/explosion1",  pos)
-        # world.add_effect(self)
+        world.add_effect(self)
 
     @property
     def direction(self):

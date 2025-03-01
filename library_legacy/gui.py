@@ -4,9 +4,7 @@ from pygame import draw, Surface, Rect, Color
 from pgzero import game, ptext
 
 from library.globals import WIDTH, HEIGHT, FPS, Team
-# from library.utils import world
-from library.utils import clamp_value
-
+from library.utils import world, clamp_value
 
 class Bar():
 
@@ -35,7 +33,7 @@ class Bar():
             self.x_offset = pos[0]
             self.y_offset = pos[1]
         self.reversed = reversed
-        # world.add_gui(self)
+        world.add_gui(self)
 
     def update_surface(self) -> Surface:
         self.surface = Surface(self.size)
@@ -114,7 +112,7 @@ class Text():
         self.typing = typing
         self._fade_step = alpha/frames_duration
         self._typing_letter_frames = 4
-        # world.add_gui(self)
+        world.add_gui(self)
 
     @property
     def pos(self):
