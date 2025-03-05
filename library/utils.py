@@ -1,6 +1,8 @@
-from pgzero.actor import Actor
 import math
+
 from pgzero.clock import clock
+from pgzero.actor import Actor
+
 from library.globals import WIDTH, HEIGHT, Team, Type
 
 class Background(Actor):
@@ -17,6 +19,7 @@ class World():
         self.end_game = 0
         self.player1 = None
         self.player2 = None
+        self.enemy_spaceships = []
 
     def add_object(self, object):
         self.objects.append(object)
@@ -73,12 +76,11 @@ class Object(Actor):
         self.parent = None
         self.childs = []
         self._dummy = dummy
-        # if not dummy:
-        #     world.add_object(self)
+        if not dummy:
+            world.add_object(self)
         
         if self.timespan > 0:
             clock.schedule_unique(self.kill, self.timespan)
-        
 
     @property
     def direction(self):
@@ -184,4 +186,7 @@ class Object(Actor):
     def kill(self):
         self.alive = False
 
-                
+background = Background('others/background')
+world = World()
+
+

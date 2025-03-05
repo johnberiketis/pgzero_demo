@@ -30,50 +30,26 @@ class Asteroid(Object):
         elif object.type == Type.PROJECTILE:
             self._damage( object.damage )
 
-# def generate_random_asteroid():
-#     random_number = random.random()
-#     if random_number < 0.3:
-#         Asteroid( image = random.choice(IMAGES_ASTEROIDS[0:4]), 
-#               pos = (random.randint(-80,WIDTH), -30),
-#               health = 10, 
-#               drop_chance = 0.2,
-#               angle = random.randint(0,360),
-#               damage = ASTEROIDS_DAMAGE)
-#     elif random_number < 0.6:
-#         Asteroid( image = random.choice(IMAGES_ASTEROIDS[4:6]), 
-#               pos = (random.randint(-80,WIDTH), -30),
-#               health = 6,
-#               drop_chance = 0.1,
-#               angle = random.randint(0,360),
-#               damage = ASTEROIDS_DAMAGE - 4 )
-#     else:
-#         Asteroid( image = random.choice(IMAGES_ASTEROIDS[6:]), 
-#               pos = (random.randint(-80,WIDTH), -30),
-#               health = 4,
-#               drop_chance = 0.01,
-#               angle = random.randint(0,360),
-#               damage = ASTEROIDS_DAMAGE - 6 )
-
-def generated_random_asteroid():
+def generate_random_asteroid():
     random_number = random.random()
     if random_number < 0.3:
-        asteroid = Asteroid( image = random.choice(IMAGES_ASTEROIDS[0:4]), 
+        Asteroid( image = random.choice(IMAGES_ASTEROIDS[0:4]), 
               pos = (random.randint(-80,WIDTH), -30),
               health = 10, 
               drop_chance = 0.2,
               angle = random.randint(0,360),
               damage = ASTEROIDS_DAMAGE)
     elif random_number < 0.6:
-        asteroid = Asteroid( image = random.choice(IMAGES_ASTEROIDS[4:6]), 
+        Asteroid( image = random.choice(IMAGES_ASTEROIDS[4:6]), 
               pos = (random.randint(-80,WIDTH), -30),
               health = 6,
               drop_chance = 0.1,
               angle = random.randint(0,360),
               damage = ASTEROIDS_DAMAGE - 4 )
     else:
-        asteroid = Asteroid( image = random.choice(IMAGES_ASTEROIDS[6:]), 
+        Asteroid( image = random.choice(IMAGES_ASTEROIDS[6:]), 
               pos = (random.randint(-80,WIDTH), -30),
               health = 4,
               drop_chance = 0.01,
               angle = random.randint(0,360),
-              damage = ASTEROIDS_DAMAGE - 6 )        
+              damage = ASTEROIDS_DAMAGE - 6 )

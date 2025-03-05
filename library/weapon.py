@@ -7,11 +7,10 @@ from library.projectile import Projectile
 from library.globals import IMAGES_PROJECTILES, MIN_WEAPON_FIRERATE, MAX_WEAPON_FIRERATE, MIN_WEAPON_BARRELS, MAX_WEAPON_BARRELS
 from library.globals import MIN_WEAPON_SPREAD_ANGLE, MAX_WEAPON_SPREAD_ANGLE, MIN_WEAPON_RANDOMNESS, MAX_WEAPON_RANDOMNESS
 from library.utils import clamp_value
-# from library.blueprints import WeaponBlueprint
 
 class Weapon():
 
-    def __init__(self, firerate=1, barrels=1, damage=0, speed=0, spread_angle=0, randomness=0, dummy = False):
+    def __init__(self, firerate, barrels, damage, speed, spread_angle = 0, randomness = 0, dummy = False):
         self.firerate = firerate
         self.barrels = barrels
         self.damage = damage
@@ -19,11 +18,9 @@ class Weapon():
         self.spread_angle = spread_angle
         self.randomness = randomness
         self._gun_ready = True
-        self._points = (self.damage * self.barrels * self.firerate) + self.speed
+        self._points = (damage * barrels * firerate) + speed
         self._mount = None
         self._dummy = dummy
-
-
 
     @property
     def firerate(self):
@@ -91,3 +88,7 @@ class Weapon():
     def _get_image(self):
         damage_index = math.ceil(self.damage)-1
         return IMAGES_PROJECTILES[damage_index] if (damage_index) < len(IMAGES_PROJECTILES) else IMAGES_PROJECTILES[-1]
+    
+    def copy(self):
+        return Weapon(self.firerate, self.barrels, self.damage, self.speed, self.spread_angle, self.randomness, dummy = False)
+
