@@ -2,7 +2,6 @@ from inspect import signature
 import re
 
 from library.spaceship import Spaceship
-from library.blueprints import SpaceshipBlueprint, WeaponBlueprint
 from library.weapon import Weapon
 from library.globals import MAX_SPACESHIP_POINTS, MAX_HEALTH_WEIGHT, HEALTH_WEIGHT, SPEED_WEIGHT, ABILITY_DURATION_WEIGHT, COOLDOWN_WEIGHT, COLLIDABLE_WEIGHT, SPACESHIP_CHILDS_LENGTH_WEIGHT
 
@@ -22,8 +21,8 @@ class DummyControl():
         puppet._control = self
 
 dummyControl = DummyControl("Dummy")
-dummyWeaponBlueprint = WeaponBlueprint( 3, 1, 2, 6 )
-dummySpaceshipBlueprint = SpaceshipBlueprint(
+dummyWeaponBlueprint = Weapon( 3, 1, 2, 6 )
+dummySpaceship = Spaceship(
     health=50,
     speed=5,
     cooldown_duration=6,
@@ -41,7 +40,7 @@ def calculate_ability_points(ability):
     if callable(ability):
         sig = signature(ability)
         if len(sig.parameters) == 1:
-            spaceship = Spaceship(dummySpaceshipBlueprint, dummy=True)
+            spaceship = Spaceship(dummySpaceship, dummy=True)
             points_before = calculate_spaceship_points(spaceship) + calculate_weapon_points(spaceship.weapon)
             ability(spaceship)
             points_after = calculate_spaceship_points(spaceship) + calculate_weapon_points(spaceship.weapon)
@@ -68,8 +67,7 @@ def calculate_spaceship_points(spaceship: Spaceship):
     return 0
 
 
-def calculate_points(spaceship_blueprint: SpaceshipBlueprint):
-    spaceship = Spaceship(spaceship_blueprint, dummy=True)
+def calculate_points(spaceship: Spaceship):
     ability_weight = (spaceship.ability_duration/spaceship.cooldown)
     return calculate_spaceship_points(spaceship) + \
            calculate_weapon_points(spaceship.weapon) + \

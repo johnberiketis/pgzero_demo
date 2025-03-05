@@ -3,7 +3,7 @@ from inspect import getdoc
 
 from pgzero.clock import clock
 
-from library.utils import Object, clamp_value
+from library.utils import Object, world, clamp_value
 from library.globals import FPS, PLAYER_START_POS, ENEMY_START_POS, MAX_ABILITY_MSG_LENGTH, MIN_ABILITY_DURATION, MAX_ABILITY_DURATION, MIN_COOLDOWN, MAX_COOLDOWN, WIDTH, HEIGHT, Type, Team
 from library.gui import Text
 from library.weapon import Weapon
@@ -25,27 +25,45 @@ def default_update(spaceship):
 
 class Spaceship(Object):
 
-    def __init__(self, blueprint: SpaceshipBlueprint, dummy = False):
-        if blueprint.team == Team.ENEMY:
+    def __init__(self, weapon: Weapon, health, image, speed, team, ability_function, ability_duration, cooldown_duration, update_function = None, dummy = False):
+        if team == Team.ENEMY:
             pos = ENEMY_START_POS
             angle = 180
+            if not dummy:
+                world.enemy_spaceships.append(self)
         else:
             pos = PLAYER_START_POS
             angle = 0
-        super().__init__(blueprint.image, pos=pos, angle=angle, health=blueprint.health, speed=blueprint.speed, team=blueprint.team, dummy=dummy)
+        super().__init__(image, pos=pos, angle=angle, health=health, speed=speed, team=team, dummy=dummy)
 
-        self.weapon = blueprint.weapon
+        self.weapon = weapon.copy() if weapon else None
         self._control = Player1("Player1")
-        self._ability = self._fix_callable(blueprint.ability_function)
-        self.ability_duration = blueprint.ability_duration
+        self._ability = self._fix_callable(ability_function)
+        self.ability_duration = ability_duration
         self.ability_message = getdoc(self._ability)
-        self.cooldown = blueprint.cooldown_duration
-        self._update_function = blueprint.update_function if blueprint.update_function else lambda a:a
+        self.cooldown = cooldown_duration
+        self._update_function = update_function if update_function else lambda a:a
 
         self._actions = 1 # Every action point can activate one ability
         self._cooldown_timer_frames = 0 # Timer to countdown the cooldown duration
         self._ability_timer_frames = 0 # Timer to countdown the ability duration
-        self._blueprint = blueprint
+
+        weapon_blueprint = WeaponBlueprint( weapon.firerate,
+                                            weapon.barrels,
+                                            weapon.damage,
+                                            weapon.speed,
+                                            weapon.spread_angle,
+                                            weapon.randomness ) if weapon else None
+
+        self._blueprint = SpaceshipBlueprint(image, 
+                                             health, 
+                                             speed, 
+                                             ability_duration, 
+                                             cooldown_duration, 
+                                             update_function, 
+                                             ability_function, 
+                                             weapon_blueprint, 
+                                             team)
 
     def _fix_callable(self, method):
         if not callable(method):
@@ -88,9 +106,9 @@ class Spaceship(Object):
         return self._weapon
     
     @weapon.setter
-    def weapon(self, weapon_blueprint: WeaponBlueprint):
-        if weapon_blueprint and isinstance(weapon_blueprint, WeaponBlueprint):
-            self._weapon = Weapon(weapon_blueprint, dummy=self._dummy)
+    def weapon(self, weapon: Weapon):
+        if weapon and isinstance(weapon, Weapon):
+            self._weapon = weapon
             self._weapon._mount = self
         else:
             self._weapon = None
@@ -125,7 +143,13 @@ class Spaceship(Object):
         self.ability_duration = self._blueprint.ability_duration
         self.cooldown = self._blueprint.cooldown_duration
         self.collidable = True
-        self.weapon = self._blueprint.weapon
+        self.weapon = Weapon(firerate = self._blueprint.weapon.firerate,
+                             barrels = self._blueprint.weapon.barrels,
+                             damage = self._blueprint.weapon.damage,
+                             speed = self._blueprint.weapon.speed,
+                             spread_angle = self._blueprint.weapon.spread_angle,
+                             randomness = self._blueprint.weapon.randomness,
+                             dummy = False)
 
         #After the cooldown reset the action points
         self._cooldown_timer_frames = self._cooldown_frames

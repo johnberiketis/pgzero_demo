@@ -9,15 +9,17 @@ import pgzrun
 from pgzero.keyboard import keyboard
 from pgzero.clock import clock
 
-from library.laboratory import enemies, pilots, player1, player2
-from library.blueprints import SpaceshipBlueprint
+from library.laboratory import pilots, player2
 from library.spaceship import Spaceship, default_update
 from library.asteroid import generate_random_asteroid
 from library.powerups import generate_random_powerup
 from library.gui import Text, Bar
 from library.utils import CollisionInformation, background, world
-from library.inspector import run_inspection, run_source_code_inspection
+from library.pilot import Player1
+# from library.inspector import run_inspection, run_source_code_inspection
 from library.globals import Team, WIDTH, HEIGHT, FPS, ASTEROIDS_PER_SECOND, POWERUPS_PER_SECOND, OBJECTS_LIMIT, WIN_GRAPHIC, LOSE_GRAPHIC, TUTORIAL, USE_INSPECTOR
+
+player1 = Player1("Player1")
 
 if TUTORIAL:
     from library.globals import TUTORIAL_MESSAGE, TUTORIAL_MESSAGE_P2
@@ -51,7 +53,7 @@ def update_objects():
             if (obj == world.player1 or obj == world.player2) and world.end_game == 0:
                 #LOSS
                 world.end_game = -1
-            if sum([e.health for e in enemies]) <= 0 and world.end_game == 0:
+            if sum([e.health for e in world.enemy_spaceships]) <= 0 and world.end_game == 0:
                 world.end_game = 1
             world.remove_object(obj)
 
@@ -116,15 +118,14 @@ def draw():
         LOSE_GRAPHIC.draw()
 
 def play():
-
     if hasattr(parent_module, "spaceship"):
-        player1spaceship_blueprint = parent_module.spaceship
+        player1spaceship = parent_module.spaceship
         if hasattr(parent_module, "update"):
-            player1spaceship_blueprint.update_function = parent_module.update
+            player1spaceship._update_function = parent_module.update
         else:
-            player1spaceship_blueprint.update_function = default_update
+            player1spaceship._update_function = default_update
     else:
-        player1spaceship_blueprint = SpaceshipBlueprint(
+        player1spaceship = Spaceship(
             image               = parent_module.image if hasattr(parent_module, "image") else 'spaceships/spaceship_orange1',
             health              = parent_module.health if hasattr(parent_module, "health") else 1,
             speed               = parent_module.speed if hasattr(parent_module, "speed") else 0,
@@ -136,12 +137,18 @@ def play():
             team                = Team.PLAYER
         )
 
-    world.player1 = Spaceship( player1spaceship_blueprint )
+    world.player1 = player1spaceship
 
     player1.take_control(world.player1)
 
+    if hasattr(parent_module, "enemy"):
+        enemy_spaceship = parent_module.enemy
+        world.objects.remove(world.enemy_spaceships[0])
+        world.enemy_spaceships[0] = enemy_spaceship
+        pilots[0].take_control(enemy_spaceship)
+
     #Enemy UI bars init
-    for e in enemies:
+    for e in world.enemy_spaceships:
         Bar((0, -50), (180,10), (93, 152, 37), (50, 50, 50), source = e, attached = True, value_attr = "health", max_value_attr = "max_health")
         Bar((0, -35), (180,10), (200, 178, 52), (50, 50, 50), source = e, attached = True, value_attr = "_ability_timer_frames", max_value_attr = "_ability_duration_frames")
 
@@ -157,18 +164,18 @@ def play():
         Bar((WIDTH-185, HEIGHT - 35),  (180,10),  (200, 178, 52), (50, 50, 50), source = world.player2, value_attr = "_ability_timer_frames", max_value_attr = "_ability_duration_frames")
 
     #Run inspection
-    if USE_INSPECTOR:
-        illegal_code = run_source_code_inspection(str(parent_source))
-        inspection_message = ""
-        if len(illegal_code) > 0:
-            illegal_code = [f"\"{code}\"" for code in illegal_code]
-            inspection_message = "Illegal source code: " + str.join(', ', illegal_code)
-        inspection_message += run_inspection(player1spaceship_blueprint)
-        if len(inspection_message)>0:
-            print(inspection_message)
-            world.objects = []
-            world.guis = []
-            Text("WARNING:\n" + inspection_message, (50, HEIGHT//2 - 100), 1200, fontsize=30, color=(200, 50, 50))
-            clock.schedule_unique(sys.exit, 20)
+    # if USE_INSPECTOR:
+    #     illegal_code = run_source_code_inspection(str(parent_source))
+    #     inspection_message = ""
+    #     if len(illegal_code) > 0:
+    #         illegal_code = [f"\"{code}\"" for code in illegal_code]
+    #         inspection_message = "Illegal source code: " + str.join(', ', illegal_code)
+    #     inspection_message += run_inspection(player1spaceship_blueprint)
+    #     if len(inspection_message)>0:
+    #         print(inspection_message)
+    #         world.objects = []
+    #         world.guis = []
+    #         Text("WARNING:\n" + inspection_message, (50, HEIGHT//2 - 100), 1200, fontsize=30, color=(200, 50, 50))
+    #         clock.schedule_unique(sys.exit, 20)
         
     pgzrun.go()

@@ -19,6 +19,7 @@ class World():
         self.end_game = 0
         self.player1 = None
         self.player2 = None
+        self.enemy_spaceships = []
 
     def add_object(self, object):
         self.objects.append(object)
