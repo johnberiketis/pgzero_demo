@@ -2,13 +2,27 @@ from enum import IntEnum
 
 from pgzero.actor import Actor
 from pgzero import loaders
+import pygame
+
+from library import settings
+
+desktop_sizes = pygame.display.get_desktop_sizes()
+
+# Some variables such as WIDTH, HEIGHT can be changed from library -> settings.py
+
+# Display constants
+WIDTH = settings.width 
+HEIGHT = settings.height 
+FULLSCREEN = settings.fullscreen 
+FPS = 60
+
+if FULLSCREEN:
+    WIDTH, HEIGHT = desktop_sizes[0]
+    pygame.display.set_mode((WIDTH, HEIGHT), pygame.FULLSCREEN)
 
 # Game constants
-WIDTH = 1920
-HEIGHT = 1080
-FPS = 60
-OBJECTS_LIMIT = 80
-TUTORIAL = True
+OBJECTS_LIMIT = settings.objects_limit 
+TUTORIAL = settings.show_controls 
 TUTORIAL_MESSAGE = "Controls:\nLEFT and RIGHT arrows to move\nSPACE to shoot\nLEFT SHIFT to activate ability\nESC to quit"
 TUTORIAL_MESSAGE_P2 = "Player 2 controls:\nKEYPAD 6 for to move right\nKEYPAD 4 to move left\nKEYPAD 0 to shoot\nKEYPAD ENTER to activate ability\nESC to quit"
 MAX_SPACESHIP_POINTS = 200
@@ -16,14 +30,14 @@ USE_INSPECTOR = False #Broken
 MAX_ABILITY_MSG_LENGTH = 30
 WIN_GRAPHIC = Actor('others/win', (WIDTH//2, HEIGHT//2))
 LOSE_GRAPHIC = Actor('others/lose', (WIDTH//2, HEIGHT//2))
-NUMBER_OF_PLAYERS = 1
-NUMBER_OF_ENEMIES = 1
+NUMBER_OF_PLAYERS = 2 if settings.two_players else 1  
+NUMBER_OF_ENEMIES = settings.number_of_enemies  
 
 # Enviroment constants
-ASTEROIDS_SPEED = 1
-ASTEROIDS_PER_SECOND = 0.4
-ASTEROIDS_DAMAGE = 10
-POWERUPS_PER_SECOND = 0.03
+ASTEROIDS_SPEED = settings.asteroids_speed 
+ASTEROIDS_PER_SECOND = settings.asteroids_per_second 
+ASTEROIDS_DAMAGE = settings.asteroids_damage 
+POWERUPS_PER_SECOND = settings.powerups_per_second 
 
 # Spaceship constants:
 MIN_COOLDOWN = 1
